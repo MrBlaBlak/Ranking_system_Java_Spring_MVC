@@ -2,12 +2,13 @@ package pl.coderslab.workshop.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import pl.coderslab.workshop.dao.*;
 import pl.coderslab.workshop.model.*;
-import pl.coderslab.workshop.repository.GamerRepository;
+import pl.coderslab.workshop.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -21,28 +22,27 @@ import static java.lang.Math.abs;
 
 @Controller
 public class GamerController {
-    private final MatchDao matchDao;
-    private final TeamDao teamDao;
-    private final MatchGamerDao matchGamerDao;
-    private final KillsAndCapsDao killsAndCapsDao;
     private final Gamer[] team1gamers;
     private final Gamer[] team2gamers;
     private final GamerRepository gamerRepository;
+    private final MatchRepository matchRepository;
+    private final TeamRepository teamRepository;
+    private final KillsAndCapsRepository killsAndCapsRepository;
+    private final MatchGamerRepository matchGamerRepository;
 
 
-    public GamerController(MatchDao matchDao, TeamDao teamDao, MatchGamerDao matchGamerDao, KillsAndCapsDao killsAndCapsDao, GamerRepository gamerRepository) {
+    public GamerController(GamerRepository gamerRepository, MatchRepository matchRepository, TeamRepository teamRepository, KillsAndCapsRepository killsAndCapsRepository, MatchGamerRepository matchGamerRepository) {
         team1gamers = new Gamer[5];
         team2gamers = new Gamer[5];
         for (int a = 0; a < 5; a++) {
             team1gamers[a] = new Gamer();
             team2gamers[a] = new Gamer();
         }
-        this.matchGamerDao = matchGamerDao;
-
-        this.matchDao = matchDao;
-        this.teamDao = teamDao;
-        this.killsAndCapsDao = killsAndCapsDao;
+        this.matchGamerRepository = matchGamerRepository;
+        this.teamRepository = teamRepository;
+        this.killsAndCapsRepository = killsAndCapsRepository;
         this.gamerRepository = gamerRepository;
+        this.matchRepository = matchRepository;
     }
 
 
@@ -51,7 +51,7 @@ public class GamerController {
     public void addGamer() {
         Gamer gamer = new Gamer();
         gamer.setMmr(631.4);
-        gamer.setName("Suddi");
+        gamer.setName("ojojo");
         gamer.setServer("EU1");
         gamer.setLastTen("1010111110");
         gamerRepository.save(gamer);
@@ -202,7 +202,7 @@ public class GamerController {
         Match match = new Match();
         match.setMap(Match.Map_Name.valueOf(mapPlayed));
         match.setServer(server);
-        matchDao.saveMatch(match);
+        matchRepository.save(match);
 
         Team team1 = new Team();
         Team team2 = new Team();
@@ -217,8 +217,8 @@ public class GamerController {
             team1.setWinOrLoose(0);
             team2.setWinOrLoose(1);
         }
-        teamDao.saveTeam(team1);
-        teamDao.saveTeam(team2);
+        teamRepository.save(team1);
+        teamRepository.save(team2);
 
         for (int i = 0; i < 5; i++) {
             team1gamers[i] = gamerRepository.findById(team1gamersId[i]).get();
@@ -292,8 +292,8 @@ public class GamerController {
             matchGamer2.setGamer(team2gamers[i]);
             matchGamer2.setMatch(match);
             matchGamer2.setTeam(team2);
-            matchGamerDao.saveMatchGamer(matchGamer1);
-            matchGamerDao.saveMatchGamer(matchGamer2);
+            matchGamerRepository.save(matchGamer1);
+            matchGamerRepository.save(matchGamer2);
 
             KillsAndCaps killsAndCaps1 = new KillsAndCaps();
             KillsAndCaps killsAndCaps2 = new KillsAndCaps();
@@ -308,8 +308,8 @@ public class GamerController {
             killsAndCaps2.setTitan(KillsAndCaps.Titan_Name.valueOf(sTeam2titans[i]));
             killsAndCaps2.setMatchGamer(matchGamer2);
 
-            killsAndCapsDao.saveKillsAndCaps(killsAndCaps1);
-            killsAndCapsDao.saveKillsAndCaps(killsAndCaps2);
+            killsAndCapsRepository.save(killsAndCaps1);
+            killsAndCapsRepository.save(killsAndCaps2);
         }
         model.addAttribute("team1", team1gamers);
         model.addAttribute("team2", team2gamers);

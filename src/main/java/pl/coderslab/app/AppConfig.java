@@ -16,7 +16,7 @@ import pl.coderslab.workshop.repository.GamerRepository;
 
 import javax.persistence.EntityManagerFactory;
 @Configuration
-@EnableJpaRepositories(basePackageClasses = GamerRepository.class)
+@EnableJpaRepositories(basePackages = "pl.coderslab")
 @EnableWebMvc
 @ComponentScan(basePackages = "pl.coderslab")
 @EnableTransactionManagement
