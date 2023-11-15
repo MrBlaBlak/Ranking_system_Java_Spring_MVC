@@ -7,28 +7,30 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import pl.coderslab.workshop.dao.*;
 import pl.coderslab.workshop.model.*;
+import pl.coderslab.workshop.repository.GamerRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Scanner;
 
 import static java.lang.Math.abs;
 
 @Controller
 public class GamerController {
-    private final GamerDao gamerDao;
     private final MatchDao matchDao;
     private final TeamDao teamDao;
     private final MatchGamerDao matchGamerDao;
     private final KillsAndCapsDao killsAndCapsDao;
     private final Gamer[] team1gamers;
     private final Gamer[] team2gamers;
-    private static final Logger logger = LoggerFactory.getLogger(GamerController.class);
+    private final GamerRepository gamerRepository;
 
-    public GamerController(GamerDao gamerDao, MatchDao matchDao, TeamDao teamDao, MatchGamerDao matchGamerDao, KillsAndCapsDao killsAndCapsDao) {
+
+    public GamerController(MatchDao matchDao, TeamDao teamDao, MatchGamerDao matchGamerDao, KillsAndCapsDao killsAndCapsDao, GamerRepository gamerRepository) {
         team1gamers = new Gamer[5];
         team2gamers = new Gamer[5];
         for (int a = 0; a < 5; a++) {
@@ -36,10 +38,11 @@ public class GamerController {
             team2gamers[a] = new Gamer();
         }
         this.matchGamerDao = matchGamerDao;
-        this.gamerDao = gamerDao;
+
         this.matchDao = matchDao;
         this.teamDao = teamDao;
         this.killsAndCapsDao = killsAndCapsDao;
+        this.gamerRepository = gamerRepository;
     }
 
 
@@ -51,7 +54,7 @@ public class GamerController {
         gamer.setName("Suddi");
         gamer.setServer("EU1");
         gamer.setLastTen("1010111110");
-        gamerDao.saveGamer(gamer);
+        gamerRepository.save(gamer);
     }
 
     @RequestMapping("/gamer/addGamers")
@@ -67,21 +70,21 @@ public class GamerController {
         while (fileScanner.hasNext()) {
             String str = fileScanner.nextLine();
             String[] actualValue = str.split(" ");
-            gamerDao.saveGamer(new Gamer(actualValue[0], Double.parseDouble(actualValue[1]), (actualValue[7]), actualValue[6]));
+            gamerRepository.save(new Gamer(actualValue[0], Double.parseDouble(actualValue[1]), (actualValue[7]), actualValue[6]));
         }
         fileScanner.close();
     }
 
     @RequestMapping("/gamer/get/{id}")
     @ResponseBody
-    public String getBook(@PathVariable int id) {
-        Gamer gamer = gamerDao.findById(id);
-        return gamer.toString();
+    public String getGamer(@PathVariable int id) {
+        Optional<Gamer> gamer = gamerRepository.findById(id);
+        return gamer.get().toString();
     }
 
     @GetMapping("/")
     public String showAllGamers(Model model) {
-        Gamer[] gamers = gamerDao.findAll().toArray(new Gamer[0]);
+        Gamer[] gamers = gamerRepository.findAll().toArray(new Gamer[0]);
         model.addAttribute("gamers", gamers);
         model.addAttribute("servers", gamers[0].getAllServers());
         return "gamer/pickTeams";
@@ -102,7 +105,7 @@ public class GamerController {
         }
 
         for (int i = 0; i < 10; i++) {
-            gamers[i] = gamerDao.findById(gamersId[i]);
+            gamers[i] = gamerRepository.findById(gamersId[i]).get();
             gamers[i].setMmr(gamers[i].getMmr() - gamers[i].serverHandicap(server));
         }
         if (teamsReady == true) {
@@ -218,8 +221,8 @@ public class GamerController {
         teamDao.saveTeam(team2);
 
         for (int i = 0; i < 5; i++) {
-            team1gamers[i] = gamerDao.findById(team1gamersId[i]);
-            team2gamers[i] = gamerDao.findById(team2gamersId[i]);
+            team1gamers[i] = gamerRepository.findById(team1gamersId[i]).get();
+            team2gamers[i] = gamerRepository.findById(team2gamersId[i]).get();
 
             int countDown = Integer.parseInt(team1gamers[i].getLastTen(), 2);
             int countDown2 = Integer.parseInt(team2gamers[i].getLastTen(), 2);
@@ -277,8 +280,8 @@ public class GamerController {
             streak2 = 0;
         }
         for (int i = 0; i < 5; i++) {
-            gamerDao.update(team1gamers[i]);
-            gamerDao.update(team2gamers[i]);
+            gamerRepository.save(team1gamers[i]);
+            gamerRepository.save(team2gamers[i]);
             MatchGamer matchGamer1 = new MatchGamer();
             MatchGamer matchGamer2 = new MatchGamer();
 
