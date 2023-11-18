@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Add JavaScript to enable/disable radio buttons based on the state of the checkbox
-    var suddenDeathCheckbox = document.getElementById("suddenDeath");
-    var team1WinRadio = document.getElementById("team1WinRadio");
-    var team2WinRadio = document.getElementById("team2WinRadio");
+    let suddenDeathCheckbox = document.getElementById("suddenDeath");
+    let team1WinRadio = document.getElementById("team1WinRadio");
+    let team2WinRadio = document.getElementById("team2WinRadio");
 
     suddenDeathCheckbox.addEventListener("change", function () {
         if (this.checked) {

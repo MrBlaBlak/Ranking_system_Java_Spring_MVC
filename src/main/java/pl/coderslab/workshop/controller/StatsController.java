@@ -4,7 +4,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import pl.coderslab.workshop.dao.*;
 import pl.coderslab.workshop.dtoForRepository.*;
 import pl.coderslab.workshop.model.Gamer;
 import pl.coderslab.workshop.repository.GamerRepository;
@@ -13,17 +12,17 @@ import java.math.BigInteger;
 import java.util.*;
 @Controller
 public class StatsController {
-    private final GamerDao gamerDao;
+
     private final GamerRepository gamerRepository;
 
-    public StatsController(GamerDao gamerDao, GamerRepository gamerRepository) {
-        this.gamerDao = gamerDao;
+    public StatsController( GamerRepository gamerRepository) {
+
         this.gamerRepository = gamerRepository;
     }
 
     @RequestMapping("/stats/general")
     public String statsGeneral(Model model) {
-        List<Gamer> gamers = gamerDao.findAll();
+        List<Gamer> gamers = gamerRepository.findAll();
         List<Object[]> gamerTitans = gamerRepository.findMostFrequentTitanForGamers();
         Map<Integer, String> gamerTitanMap = new HashMap<>();
 
@@ -259,7 +258,7 @@ public class StatsController {
     }
 
     public Gamer getGamer(int id) {
-        return gamerDao.findById(id);
+        return gamerRepository.findById(id).get();
 
     }
     private String getTitanName(int titanId) {

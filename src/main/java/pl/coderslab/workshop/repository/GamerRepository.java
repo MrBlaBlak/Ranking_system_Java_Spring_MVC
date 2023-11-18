@@ -5,9 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pl.coderslab.workshop.model.Gamer;
-import pl.coderslab.workshop.model.MatchGamer;
-
-import java.awt.print.Book;
 import java.util.List;
 
 @Repository

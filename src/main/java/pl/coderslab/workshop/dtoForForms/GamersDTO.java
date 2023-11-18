@@ -5,24 +5,24 @@ import pl.coderslab.workshop.model.Gamer;
 import java.util.List;
 
 public class GamersDTO {
-    private List<Gamer> gamersList;
+    private int[] gamersList;
     private String server;
     private boolean teamsReady;
 
     public GamersDTO() {
     }
 
-    public GamersDTO(List<Gamer> gamersList, String server, boolean teamsReady) {
-        this.gamersList = gamersList;
+    public GamersDTO(String server, boolean teamsReady) {
+        this.gamersList = new int[10];
         this.server = server;
         this.teamsReady = teamsReady;
     }
 
-    public List<Gamer> getGamersList() {
+    public int[] getGamersList() {
         return gamersList;
     }
 
-    public void setGamersList(List<Gamer> gamersList) {
+    public void setGamersList(int[] gamersList) {
         this.gamersList = gamersList;
     }
 
@@ -40,5 +40,14 @@ public class GamersDTO {
 
     public void setTeamsReady(boolean teamsReady) {
         this.teamsReady = teamsReady;
+    }
+
+    @Override
+    public String toString() {
+        return "GamersDTO{" +
+                "gamersList=" + gamersList +
+                ", server='" + server + '\'' +
+                ", teamsReady=" + teamsReady +
+                '}';
     }
 }

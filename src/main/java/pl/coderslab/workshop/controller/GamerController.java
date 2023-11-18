@@ -1,45 +1,44 @@
 package pl.coderslab.workshop.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import pl.coderslab.workshop.dao.*;
+import pl.coderslab.workshop.dtoForForms.GamersDTO;
+import pl.coderslab.workshop.dtoForForms.GamersMatchStatsDTO;
 import pl.coderslab.workshop.model.*;
-
-import javax.servlet.http.HttpServletRequest;
+import pl.coderslab.workshop.repository.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Optional;
 import java.util.Scanner;
 
 import static java.lang.Math.abs;
 
 @Controller
 public class GamerController {
-    private final GamerDao gamerDao;
-    private final MatchDao matchDao;
-    private final TeamDao teamDao;
-    private final MatchGamerDao matchGamerDao;
-    private final KillsAndCapsDao killsAndCapsDao;
     private final Gamer[] team1gamers;
     private final Gamer[] team2gamers;
-    private static final Logger logger = LoggerFactory.getLogger(GamerController.class);
+    private final GamerRepository gamerRepository;
+    private final MatchRepository matchRepository;
+    private final TeamRepository teamRepository;
+    private final KillsAndCapsRepository killsAndCapsRepository;
+    private final MatchGamerRepository matchGamerRepository;
 
-    public GamerController(GamerDao gamerDao, MatchDao matchDao, TeamDao teamDao, MatchGamerDao matchGamerDao, KillsAndCapsDao killsAndCapsDao) {
+
+
+    public GamerController(GamerRepository gamerRepository, MatchRepository matchRepository, TeamRepository teamRepository, KillsAndCapsRepository killsAndCapsRepository, MatchGamerRepository matchGamerRepository) {
         team1gamers = new Gamer[5];
         team2gamers = new Gamer[5];
         for (int a = 0; a < 5; a++) {
             team1gamers[a] = new Gamer();
             team2gamers[a] = new Gamer();
         }
-        this.matchGamerDao = matchGamerDao;
-        this.gamerDao = gamerDao;
-        this.matchDao = matchDao;
-        this.teamDao = teamDao;
-        this.killsAndCapsDao = killsAndCapsDao;
+        this.matchGamerRepository = matchGamerRepository;
+        this.teamRepository = teamRepository;
+        this.killsAndCapsRepository = killsAndCapsRepository;
+        this.gamerRepository = gamerRepository;
+        this.matchRepository = matchRepository;
     }
 
 
@@ -48,16 +47,15 @@ public class GamerController {
     public void addGamer() {
         Gamer gamer = new Gamer();
         gamer.setMmr(631.4);
-        gamer.setName("Suddi");
+        gamer.setName("ojojo");
         gamer.setServer("EU1");
         gamer.setLastTen("1010111110");
-        gamerDao.saveGamer(gamer);
+        gamerRepository.save(gamer);
     }
 
     @RequestMapping("/gamer/addGamers")
     @ResponseBody
-    public void readTextFile() throws FileNotFoundException, IOException {
-        boolean loop = true;
+    public void readTextFile() throws IOException {
         File file = new File("E:\\SpringPracaDomowa\\all_data.txt");
         Scanner fileScanner = new Scanner(file);
         boolean exists = file.exists();
@@ -67,42 +65,36 @@ public class GamerController {
         while (fileScanner.hasNext()) {
             String str = fileScanner.nextLine();
             String[] actualValue = str.split(" ");
-            gamerDao.saveGamer(new Gamer(actualValue[0], Double.parseDouble(actualValue[1]), (actualValue[7]), actualValue[6]));
+            gamerRepository.save(new Gamer(actualValue[0], Double.parseDouble(actualValue[1]), (actualValue[7]), actualValue[6]));
         }
         fileScanner.close();
     }
 
     @RequestMapping("/gamer/get/{id}")
     @ResponseBody
-    public String getBook(@PathVariable int id) {
-        Gamer gamer = gamerDao.findById(id);
-        return gamer.toString();
+    public String getGamer(@PathVariable int id) {
+        Optional<Gamer> gamer = gamerRepository.findById(id);
+        return gamer.get().toString();
     }
 
     @GetMapping("/")
     public String showAllGamers(Model model) {
-        Gamer[] gamers = gamerDao.findAll().toArray(new Gamer[0]);
+        Gamer[] gamers = gamerRepository.findAll().toArray(new Gamer[0]);
         model.addAttribute("gamers", gamers);
         model.addAttribute("servers", gamers[0].getAllServers());
+        model.addAttribute("gamersDTO", new GamersDTO());
         return "gamer/pickTeams";
     }
 
 
     @PostMapping("/")
-    public String processForm(HttpServletRequest request, Model model) {
-//        model.asMap().forEach((k, v) -> logger.debug(k + ": " + v));
-        String steamsReady = request.getParameter("teamsReady");
-        boolean teamsReady = "true".equals(steamsReady);
-        String[] gamersIdString = request.getParameterValues("gamers");
-        String server = request.getParameter("server");
-        int[] gamersId = new int[10];
-        Gamer[] gamers = new Gamer[10];
-        for (int i = 0; i < gamersIdString.length; i++) {
-            gamersId[i] = Integer.parseInt(gamersIdString[i]);
-        }
+    public String processForm(GamersDTO gamersDTO, Model model) {
+       String server = gamersDTO.getServer();
+       boolean teamsReady = gamersDTO.isTeamsReady();
+       Gamer[] gamers = new Gamer[10];
 
         for (int i = 0; i < 10; i++) {
-            gamers[i] = gamerDao.findById(gamersId[i]);
+            gamers[i] = gamerRepository.findById(gamersDTO.getGamersList()[i]).get();
             gamers[i].setMmr(gamers[i].getMmr() - gamers[i].serverHandicap(server));
         }
         if (teamsReady == true) {
@@ -160,27 +152,26 @@ public class GamerController {
         model.addAttribute("team1", team1gamers);
         model.addAttribute("team2", team2gamers);
         model.addAttribute("server", server);
-
+        model.addAttribute("gamersMatchStatsDTO", new GamersMatchStatsDTO());
         return "gamer/teamsScores";
     }
 
     @PostMapping("/updateScores")
-    public String updateScores(HttpServletRequest request, Model model) {
+    public String updateScores(GamersMatchStatsDTO gamersMatchStatsDTO, Model model) {
 
-        String server = request.getParameter("server");
-        boolean suddenDeath = "true".equals(request.getParameter("suddendeath"));
-        String suddenDeathWhoWon = request.getParameter("teamSDWinner");
-        String[] sTeam1titans = request.getParameterValues("team1tytanId");
-        String[] sTeam2titans = request.getParameterValues("team2tytanId");
-
-        int[] team1gamersId = Arrays.stream(request.getParameterValues("team1gamersId")).mapToInt(Integer::parseInt).toArray();
-        int[] team1elims = Arrays.stream(request.getParameterValues("team1eliminacjeId")).mapToInt(Integer::parseInt).toArray();
-        int[] team1flags = Arrays.stream(request.getParameterValues("team1flagiId")).mapToInt(Integer::parseInt).toArray();
-        int[] team2gamersId = Arrays.stream(request.getParameterValues("team2gamersId")).mapToInt(Integer::parseInt).toArray();
-        int[] team2elims = Arrays.stream(request.getParameterValues("team2eliminacjeId")).mapToInt(Integer::parseInt).toArray();
-        int[] team2flags = Arrays.stream(request.getParameterValues("team2flagiId")).mapToInt(Integer::parseInt).toArray();
-        String mapPlayed = request.getParameter("map");
-
+        String server = gamersMatchStatsDTO.getServer();
+        boolean suddenDeath = gamersMatchStatsDTO.isSuddenDeath();
+        String suddenDeathWhoWon = gamersMatchStatsDTO.getSuddenDeathWhoWon();
+        String[] sTeam1titans = gamersMatchStatsDTO.getTeam1titans();
+        String[] sTeam2titans = gamersMatchStatsDTO.getTeam2titans();
+        int[] team1gamersId = gamersMatchStatsDTO.getTeam1gamersId();
+        int[] team1elims = gamersMatchStatsDTO.getTeam1elims();
+        int[] team1flags = gamersMatchStatsDTO.getTeam1flags();
+        int[] team2gamersId = gamersMatchStatsDTO.getTeam2gamersId();
+        int[] team2elims = gamersMatchStatsDTO.getTeam2elims();
+        int[] team2flags = gamersMatchStatsDTO.getTeam2flags();
+        String mapPlayed = gamersMatchStatsDTO.getMapPlayed();
+        System.out.println(gamersMatchStatsDTO);
         int team1flagsTotal = 0, team2flagsTotal = 0, whoWon = 0, streak = 0, streak2 = 0;
 
         for (int i = 0; i < 5; i++) {
@@ -199,7 +190,7 @@ public class GamerController {
         Match match = new Match();
         match.setMap(Match.Map_Name.valueOf(mapPlayed));
         match.setServer(server);
-        matchDao.saveMatch(match);
+        matchRepository.save(match);
 
         Team team1 = new Team();
         Team team2 = new Team();
@@ -214,12 +205,12 @@ public class GamerController {
             team1.setWinOrLoose(0);
             team2.setWinOrLoose(1);
         }
-        teamDao.saveTeam(team1);
-        teamDao.saveTeam(team2);
+        teamRepository.save(team1);
+        teamRepository.save(team2);
 
         for (int i = 0; i < 5; i++) {
-            team1gamers[i] = gamerDao.findById(team1gamersId[i]);
-            team2gamers[i] = gamerDao.findById(team2gamersId[i]);
+            team1gamers[i] = gamerRepository.findById(team1gamersId[i]).get();
+            team2gamers[i] = gamerRepository.findById(team2gamersId[i]).get();
 
             int countDown = Integer.parseInt(team1gamers[i].getLastTen(), 2);
             int countDown2 = Integer.parseInt(team2gamers[i].getLastTen(), 2);
@@ -277,8 +268,8 @@ public class GamerController {
             streak2 = 0;
         }
         for (int i = 0; i < 5; i++) {
-            gamerDao.update(team1gamers[i]);
-            gamerDao.update(team2gamers[i]);
+            gamerRepository.save(team1gamers[i]);
+            gamerRepository.save(team2gamers[i]);
             MatchGamer matchGamer1 = new MatchGamer();
             MatchGamer matchGamer2 = new MatchGamer();
 
@@ -289,8 +280,8 @@ public class GamerController {
             matchGamer2.setGamer(team2gamers[i]);
             matchGamer2.setMatch(match);
             matchGamer2.setTeam(team2);
-            matchGamerDao.saveMatchGamer(matchGamer1);
-            matchGamerDao.saveMatchGamer(matchGamer2);
+            matchGamerRepository.save(matchGamer1);
+            matchGamerRepository.save(matchGamer2);
 
             KillsAndCaps killsAndCaps1 = new KillsAndCaps();
             KillsAndCaps killsAndCaps2 = new KillsAndCaps();
@@ -305,8 +296,8 @@ public class GamerController {
             killsAndCaps2.setTitan(KillsAndCaps.Titan_Name.valueOf(sTeam2titans[i]));
             killsAndCaps2.setMatchGamer(matchGamer2);
 
-            killsAndCapsDao.saveKillsAndCaps(killsAndCaps1);
-            killsAndCapsDao.saveKillsAndCaps(killsAndCaps2);
+            killsAndCapsRepository.save(killsAndCaps1);
+            killsAndCapsRepository.save(killsAndCaps2);
         }
         model.addAttribute("team1", team1gamers);
         model.addAttribute("team2", team2gamers);
