@@ -4,7 +4,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import pl.coderslab.workshop.dao.*;
 import pl.coderslab.workshop.dtoForRepository.*;
 import pl.coderslab.workshop.model.Gamer;
 import pl.coderslab.workshop.repository.GamerRepository;

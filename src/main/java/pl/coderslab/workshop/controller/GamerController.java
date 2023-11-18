@@ -1,20 +1,15 @@
 package pl.coderslab.workshop.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import pl.coderslab.workshop.dao.*;
+import pl.coderslab.workshop.dtoForForms.GamersDTO;
+import pl.coderslab.workshop.dtoForForms.GamersMatchStatsDTO;
 import pl.coderslab.workshop.model.*;
 import pl.coderslab.workshop.repository.*;
-
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -29,6 +24,7 @@ public class GamerController {
     private final TeamRepository teamRepository;
     private final KillsAndCapsRepository killsAndCapsRepository;
     private final MatchGamerRepository matchGamerRepository;
+
 
 
     public GamerController(GamerRepository gamerRepository, MatchRepository matchRepository, TeamRepository teamRepository, KillsAndCapsRepository killsAndCapsRepository, MatchGamerRepository matchGamerRepository) {
@@ -59,8 +55,7 @@ public class GamerController {
 
     @RequestMapping("/gamer/addGamers")
     @ResponseBody
-    public void readTextFile() throws FileNotFoundException, IOException {
-        boolean loop = true;
+    public void readTextFile() throws IOException {
         File file = new File("E:\\SpringPracaDomowa\\all_data.txt");
         Scanner fileScanner = new Scanner(file);
         boolean exists = file.exists();
@@ -87,25 +82,19 @@ public class GamerController {
         Gamer[] gamers = gamerRepository.findAll().toArray(new Gamer[0]);
         model.addAttribute("gamers", gamers);
         model.addAttribute("servers", gamers[0].getAllServers());
+        model.addAttribute("gamersDTO", new GamersDTO());
         return "gamer/pickTeams";
     }
 
 
     @PostMapping("/")
-    public String processForm(HttpServletRequest request, Model model) {
-//        model.asMap().forEach((k, v) -> logger.debug(k + ": " + v));
-        String steamsReady = request.getParameter("teamsReady");
-        boolean teamsReady = "true".equals(steamsReady);
-        String[] gamersIdString = request.getParameterValues("gamers");
-        String server = request.getParameter("server");
-        int[] gamersId = new int[10];
-        Gamer[] gamers = new Gamer[10];
-        for (int i = 0; i < gamersIdString.length; i++) {
-            gamersId[i] = Integer.parseInt(gamersIdString[i]);
-        }
+    public String processForm(GamersDTO gamersDTO, Model model) {
+       String server = gamersDTO.getServer();
+       boolean teamsReady = gamersDTO.isTeamsReady();
+       Gamer[] gamers = new Gamer[10];
 
         for (int i = 0; i < 10; i++) {
-            gamers[i] = gamerRepository.findById(gamersId[i]).get();
+            gamers[i] = gamerRepository.findById(gamersDTO.getGamersList()[i]).get();
             gamers[i].setMmr(gamers[i].getMmr() - gamers[i].serverHandicap(server));
         }
         if (teamsReady == true) {
@@ -163,27 +152,26 @@ public class GamerController {
         model.addAttribute("team1", team1gamers);
         model.addAttribute("team2", team2gamers);
         model.addAttribute("server", server);
-
+        model.addAttribute("gamersMatchStatsDTO", new GamersMatchStatsDTO());
         return "gamer/teamsScores";
     }
 
     @PostMapping("/updateScores")
-    public String updateScores(HttpServletRequest request, Model model) {
+    public String updateScores(GamersMatchStatsDTO gamersMatchStatsDTO, Model model) {
 
-        String server = request.getParameter("server");
-        boolean suddenDeath = "true".equals(request.getParameter("suddendeath"));
-        String suddenDeathWhoWon = request.getParameter("teamSDWinner");
-        String[] sTeam1titans = request.getParameterValues("team1tytanId");
-        String[] sTeam2titans = request.getParameterValues("team2tytanId");
-
-        int[] team1gamersId = Arrays.stream(request.getParameterValues("team1gamersId")).mapToInt(Integer::parseInt).toArray();
-        int[] team1elims = Arrays.stream(request.getParameterValues("team1eliminacjeId")).mapToInt(Integer::parseInt).toArray();
-        int[] team1flags = Arrays.stream(request.getParameterValues("team1flagiId")).mapToInt(Integer::parseInt).toArray();
-        int[] team2gamersId = Arrays.stream(request.getParameterValues("team2gamersId")).mapToInt(Integer::parseInt).toArray();
-        int[] team2elims = Arrays.stream(request.getParameterValues("team2eliminacjeId")).mapToInt(Integer::parseInt).toArray();
-        int[] team2flags = Arrays.stream(request.getParameterValues("team2flagiId")).mapToInt(Integer::parseInt).toArray();
-        String mapPlayed = request.getParameter("map");
-
+        String server = gamersMatchStatsDTO.getServer();
+        boolean suddenDeath = gamersMatchStatsDTO.isSuddenDeath();
+        String suddenDeathWhoWon = gamersMatchStatsDTO.getSuddenDeathWhoWon();
+        String[] sTeam1titans = gamersMatchStatsDTO.getTeam1titans();
+        String[] sTeam2titans = gamersMatchStatsDTO.getTeam2titans();
+        int[] team1gamersId = gamersMatchStatsDTO.getTeam1gamersId();
+        int[] team1elims = gamersMatchStatsDTO.getTeam1elims();
+        int[] team1flags = gamersMatchStatsDTO.getTeam1flags();
+        int[] team2gamersId = gamersMatchStatsDTO.getTeam2gamersId();
+        int[] team2elims = gamersMatchStatsDTO.getTeam2elims();
+        int[] team2flags = gamersMatchStatsDTO.getTeam2flags();
+        String mapPlayed = gamersMatchStatsDTO.getMapPlayed();
+        System.out.println(gamersMatchStatsDTO);
         int team1flagsTotal = 0, team2flagsTotal = 0, whoWon = 0, streak = 0, streak2 = 0;
 
         for (int i = 0; i < 5; i++) {

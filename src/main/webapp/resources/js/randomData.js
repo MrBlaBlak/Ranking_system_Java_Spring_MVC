@@ -10,34 +10,33 @@ function getRandomFlagValue() {
     return Math.floor(Math.random() * 3);
 }
 
-// Ustaw losową wartość w polu team2eliminacjeId po załadowaniu strony
 window.addEventListener('load', function() {
-    let team1eliminacjeIdInputs = document.getElementsByName('team1eliminacjeId');
-    let team2eliminacjeIdInputs = document.getElementsByName('team2eliminacjeId');
-    let team1flagiIdInputs = document.getElementsByName('team1flagiId');
-    let team2flagiIdInputs = document.getElementsByName('team2flagiId');
+    let team1Elims = document.getElementsByName('team1elims');
+    let team2Elims = document.getElementsByName('team2elims');
+    let team1Flags = document.getElementsByName('team1flags');
+    let team2Flags = document.getElementsByName('team2flags');
 
-    for (let i = 0; i < team1eliminacjeIdInputs.length; i++) {
-        team1eliminacjeIdInputs[i].value = getRandomValue();
-        team2eliminacjeIdInputs[i].value = getRandomValue();
-        team1flagiIdInputs[i].value = getRandomFlagValue();
-        team2flagiIdInputs[i].value = getRandomFlagValue();
+    for (let i = 0; i < team1Elims.length; i++) {
+        team1Elims[i].value = getRandomValue();
+        team2Elims[i].value = getRandomValue();
+        team1Flags[i].value = getRandomFlagValue();
+        team2Flags[i].value = getRandomFlagValue();
     }
 
-    let mapSelect = document.getElementsByName('map')[0]; // Dla jednego pola map
-    let team1tytanSelects = document.getElementsByName('team1tytanId');
-    let team2tytanSelects = document.getElementsByName('team2tytanId');
+    let mapSelect = document.getElementById("map"); // Dla jednego pola map
+    let team1Titans = document.getElementsByName('team1titans');
+    let team2Titans = document.getElementsByName('team2titans');
 
     let mapOptions = ['boomtown', 'exo', 'eden', 'drydock', 'angel', 'colony', 'glitch'];
     let titanOptions = ['ion', 'tone', 'monarch', 'northstar', 'ronin', 'legion', 'scorch'];
 
     mapSelect.value = getRandomOption(mapOptions);
 
-    for (let i = 0; i < team1tytanSelects.length; i++) {
-        team1tytanSelects[i].value = getRandomOption(titanOptions);
+    for (let i = 0; i < team1Titans.length; i++) {
+        team1Titans[i].value = getRandomOption(titanOptions);
     }
 
-    for (let i = 0; i < team2tytanSelects.length; i++) {
-        team2tytanSelects[i].value = getRandomOption(titanOptions);
+    for (let i = 0; i < team2Titans.length; i++) {
+        team2Titans[i].value = getRandomOption(titanOptions);
     }
 });
