@@ -1,5 +1,8 @@
 package pl.coderslab.workshop.controller;
 
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -7,11 +10,9 @@ import pl.coderslab.workshop.dtoForForms.GamersDTO;
 import pl.coderslab.workshop.dtoForForms.GamersMatchStatsDTO;
 import pl.coderslab.workshop.model.*;
 import pl.coderslab.workshop.repository.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+
+import java.io.*;
 import java.util.Optional;
-import java.util.Scanner;
 
 import static java.lang.Math.abs;
 
@@ -24,7 +25,6 @@ public class GamerController {
     private final TeamRepository teamRepository;
     private final KillsAndCapsRepository killsAndCapsRepository;
     private final MatchGamerRepository matchGamerRepository;
-
 
 
     public GamerController(GamerRepository gamerRepository, MatchRepository matchRepository, TeamRepository teamRepository, KillsAndCapsRepository killsAndCapsRepository, MatchGamerRepository matchGamerRepository) {
@@ -42,43 +42,29 @@ public class GamerController {
     }
 
 
-    @RequestMapping("/gamer/add")
-    @ResponseBody
-    public void addGamer() {
-        Gamer gamer = new Gamer();
-        gamer.setMmr(631.4);
-        gamer.setName("ojojo");
-        gamer.setServer("EU1");
-        gamer.setLastTen("1010111110");
-        gamerRepository.save(gamer);
-    }
+    //add players from data file
+    @RequestMapping("/")
+    public String readTextFile() throws IOException {
+        long gamerCount = gamerRepository.count();
+        if (gamerCount == 0) {
+            ResourceLoader resourceLoader = new DefaultResourceLoader();
+            Resource resource = resourceLoader.getResource("classpath:all_data.txt");
 
-    @RequestMapping("/gamer/addGamers")
-    @ResponseBody
-    public void readTextFile() throws IOException {
-        File file = new File("E:\\SpringPracaDomowa\\all_data.txt");
-        Scanner fileScanner = new Scanner(file);
-        boolean exists = file.exists();
-        if (!exists) {
-            file.createNewFile();
+            try (InputStream inputStream = resource.getInputStream();
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] actualValue = line.split(" ");
+                    gamerRepository.save(new Gamer(actualValue[0], Double.parseDouble(actualValue[1]), actualValue[7], actualValue[6]));
+                }
+            }
         }
-        while (fileScanner.hasNext()) {
-            String str = fileScanner.nextLine();
-            String[] actualValue = str.split(" ");
-            gamerRepository.save(new Gamer(actualValue[0], Double.parseDouble(actualValue[1]), (actualValue[7]), actualValue[6]));
-        }
-        fileScanner.close();
+        return "redirect:/pickTeams";
     }
 
-    @RequestMapping("/gamer/get/{id}")
-    @ResponseBody
-    public String getGamer(@PathVariable int id) {
-        Optional<Gamer> gamer = gamerRepository.findById(id);
-        return gamer.get().toString();
-    }
-
-    @GetMapping("/")
-    public String showAllGamers(Model model) {
+    //start, get data and send it to view
+    @GetMapping("/pickTeams")
+    public String pickTeams(Model model) {
         Gamer[] gamers = gamerRepository.findAll().toArray(new Gamer[0]);
         model.addAttribute("gamers", gamers);
         model.addAttribute("servers", gamers[0].getAllServers());
@@ -86,67 +72,81 @@ public class GamerController {
         return "gamer/pickTeams";
     }
 
-
-    @PostMapping("/")
+    //find most balanced teams
+    @PostMapping("/pickTeams")
     public String processForm(GamersDTO gamersDTO, Model model) {
-       String server = gamersDTO.getServer();
-       boolean teamsReady = gamersDTO.isTeamsReady();
-       Gamer[] gamers = new Gamer[10];
-
+        String server = gamersDTO.getServer();
+        boolean teamsReady = gamersDTO.isTeamsReady();
+        Gamer[] gamers = new Gamer[10];
+        //apply handicap based on server and therefore players ping to that server
         for (int i = 0; i < 10; i++) {
-            gamers[i] = gamerRepository.findById(gamersDTO.getGamersList()[i]).get();
+            Optional<Gamer> optionalGamer = gamerRepository.findById(gamersDTO.getGamersList()[i]);
+
+            if (optionalGamer.isPresent()) {
+                gamers[i] = optionalGamer.get();
+            } else {
+                return "redirect:/pickTeams";
+            }
             gamers[i].setMmr(gamers[i].getMmr() - gamers[i].serverHandicap(server));
         }
-        if (teamsReady == true) {
+        //If the checkmark teamsReady was selected, teams are selected in accordance with the order of players entered in the pickTeams function.
+        if (teamsReady) {
             for (int i = 0; i < 5; i++) {
                 team1gamers[i] = gamers[i];
                 team2gamers[i] = gamers[i + 5];
             }
             checkTeam1(team1gamers, server);
             checkTeam2(team2gamers, server);
+            //algorithm for finding possibly most balanced teams - the algorithm checks all combinations without repetition
         } else {
+            //find perfectBalance score
             double perfectBalance = checkPerfectBalance(gamers);
-            int spr5 = 0, d = 0;
-            double licznik = 0, test = 0, best = 0, bestd = 1000;
+            int testIf5 = 0, d = 0;
+            double mmrCounter = 0, currentDiffFromPerfectBalance, bestScoreSoFar = 0, smallestDiff = 1000;
+            //find a team whose difference in mmr points with perfectBalance is as small as possible
             for (int i = 1023; i > 0; i--) {
 
-                for (int k = 0; k < 10; ++k) {
-                    if (((i >> k) & 1) == 1) {
-                        licznik = licznik + gamers[k].getMmr();
-                        spr5++;
+                for (int a = 0; a < 10; ++a) {
+                    if (((i >> a) & 1) == 1) {
+                        mmrCounter += gamers[a].getMmr();
+                        testIf5++;
                     }
                 }
-                test = abs(licznik - perfectBalance);
-                if (test < bestd && spr5 == 5) {
-                    best = licznik;
-                    bestd = test;
-                    for (int b = 0; b < 10; ++b) {
-                        if (((i >> b) & 1) == 1) {
-                            team1gamers[d].cloneValues(gamers[b]);
+                currentDiffFromPerfectBalance = abs(mmrCounter - perfectBalance);
+                if (currentDiffFromPerfectBalance < smallestDiff && testIf5 == 5) {
+                    bestScoreSoFar = mmrCounter;
+                    smallestDiff = currentDiffFromPerfectBalance;
+                    for (int a = 0; a < 10; ++a) {
+                        if (((i >> a) & 1) == 1) {
+                            team1gamers[d].cloneValues(gamers[a]);
                             d++;
                         }
                     }
                 }
-                licznik = 0;
-                spr5 = 0;
+                mmrCounter = 0;
+                testIf5 = 0;
                 d = 0;
             }
-            System.out.println("team nr1 points - " + Math.round(best * 10) / 10f + "\n");
+            System.out.println("team nr1 points - " + Math.round(bestScoreSoFar * 10) / 10f + "\n");
             checkTeam1(team1gamers, server);
-            int test2 = 0, m = 0;
-            double best2 = 0;
-            for (int c = 0; c < 10; c++) {
-                for (int d1 = 0; d1 < 5; d1++) {
-                    if (gamers[c].getName() == team1gamers[d1].getName()) test2++;
+
+            int wasInTeam1 = 0, counter = 0;
+            double bestScoreSoFar2 = 0;
+            //get remaining players into team2
+            for (int a = 0; a < 10; a++) {
+                for (int b = 0; b < 5; b++) {
+                    if (gamers[a].getName().equals(team1gamers[b].getName())) {
+                        wasInTeam1++;
+                    }
                 }
-                if (test2 == 0) {
-                    team2gamers[m].cloneValues(gamers[c]);
-                    best2 = best2 + team2gamers[m].getMmr();
-                    m++;
+                if (wasInTeam1 == 0) {
+                    team2gamers[counter].cloneValues(gamers[a]);
+                    bestScoreSoFar2 += team2gamers[counter].getMmr();
+                    counter++;
                 }
-                test2 = 0;
+                wasInTeam1 = 0;
             }
-            System.out.println("team nr2 points - " + Math.round(best2 * 10) / 10f + "\n");
+            System.out.println("team nr2 points - " + Math.round(bestScoreSoFar2 * 10) / 10f + "\n");
             checkTeam2(team2gamers, server);
         }
         model.addAttribute("team1", team1gamers);
@@ -156,6 +156,7 @@ public class GamerController {
         return "gamer/teamsScores";
     }
 
+    //update scores of players
     @PostMapping("/updateScores")
     public String updateScores(GamersMatchStatsDTO gamersMatchStatsDTO, Model model) {
 
@@ -173,7 +174,10 @@ public class GamerController {
         String mapPlayed = gamersMatchStatsDTO.getMapPlayed();
         System.out.println(gamersMatchStatsDTO);
         int team1flagsTotal = 0, team2flagsTotal = 0, whoWon = 0, streak = 0, streak2 = 0;
-
+     /*
+      team that scored more flags wins the game; whoWon = 1 -> team 1 won; whoWon = 2 -> team 2 won, suddenDeath is special case when the time
+      ends and both teams have equal flags amount -> last one standing is the winner
+      */
         for (int i = 0; i < 5; i++) {
             team1flagsTotal += team1flags[i];
             team2flagsTotal += team2flags[i];
@@ -183,15 +187,26 @@ public class GamerController {
         } else if (team1flagsTotal < team2flagsTotal) {
             whoWon = 2;
         } else {
-            if (suddenDeathWhoWon.equals("team1")) whoWon = 1;
-            if (suddenDeathWhoWon.equals("team2")) whoWon = 2;
-        }
+            if (suddenDeathWhoWon==null) {
+                model.addAttribute("team1", team1gamers);
+                model.addAttribute("team2", team2gamers);
+                model.addAttribute("server", server);
+                return "gamer/teamsScores";
+            }
+            else if (suddenDeathWhoWon.equals("team1")) {
+                whoWon = 1;
+            }
+            else if (suddenDeathWhoWon.equals("team2")) {
+                whoWon = 2;
+            }
 
+        }
+        //add match to database
         Match match = new Match();
         match.setMap(Match.Map_Name.valueOf(mapPlayed));
         match.setServer(server);
         matchRepository.save(match);
-
+        //add teams to database
         Team team1 = new Team();
         Team team2 = new Team();
         team1.setFlagAdvantage(team1flagsTotal - team2flagsTotal);
@@ -207,11 +222,23 @@ public class GamerController {
         }
         teamRepository.save(team1);
         teamRepository.save(team2);
-
+        //change players mmr
         for (int i = 0; i < 5; i++) {
-            team1gamers[i] = gamerRepository.findById(team1gamersId[i]).get();
-            team2gamers[i] = gamerRepository.findById(team2gamersId[i]).get();
+            Optional<Gamer> optionalGamer = gamerRepository.findById(team1gamersId[i]);
 
+            if (optionalGamer.isPresent()) {
+                team1gamers[i] = optionalGamer.get();
+            } else {
+                return "redirect:/pickTeams";
+            }
+            Optional<Gamer> optionalGamer2 = gamerRepository.findById(team2gamersId[i]);
+
+            if (optionalGamer2.isPresent()) {
+                team2gamers[i] = optionalGamer.get();
+            } else {
+                return "redirect:/pickTeams";
+            }
+            //lastTen is the binary representation of last 10 games where 0 represents a loss and 1 represents a win - so e.g 1011 is: win loss win win
             int countDown = Integer.parseInt(team1gamers[i].getLastTen(), 2);
             int countDown2 = Integer.parseInt(team2gamers[i].getLastTen(), 2);
 
@@ -221,7 +248,7 @@ public class GamerController {
                 if ((countDown2 & 1) == 1) streak2++;
                 countDown2 = countDown2 >> 1;
             }
-
+            //apply bonus from last 10 winrate
             double points = 0, points2 = 0;
             if ((streak == 7 || streak == 8) && whoWon == 1) points = 1.2d;
             else if ((streak == 2 || streak == 3) && whoWon == 2) points = -1.2d;
@@ -237,14 +264,15 @@ public class GamerController {
             else if (streak2 <= 1 && whoWon == 1) points2 = -1.5d;
             else if (streak2 < 9 && whoWon == 2) points2 = 1;
 
-
+            //apply bonus from flag advantage
             if (whoWon == 1) {
                 points = points + (team1.getFlagAdvantage() / 5.0d) - 0.2d;
                 points2 = points2 + (team2.getFlagAdvantage() / 5.0d) + 0.2d;
-
+                //change score if suddenDeath
                 if (suddenDeath) {
                     points = 0.5d;
                     points2 = -0.5d;
+                    //update last ten; suddenDeath result is not counted neither as win or loss for last 10
                 } else {
                     team1gamers[i].setLastTen(Integer.toBinaryString((Integer.parseInt(team1gamers[i].getLastTen(), 2) >> 1) | 512));
                     team2gamers[i].setLastTen(Integer.toBinaryString(Integer.parseInt(team2gamers[i].getLastTen(), 2) >> 1));
@@ -253,10 +281,11 @@ public class GamerController {
             if (whoWon == 2) {
                 points2 = points2 + team2.getFlagAdvantage() / 5.0d - 0.2d;
                 points = points + team1.getFlagAdvantage() / 5.0d + 0.2d;
-
+                //change score if suddenDeath
                 if (suddenDeath) {
                     points = -0.5d;
                     points2 = 0.5d;
+                    //update last ten; suddenDeath result is not counted neither as win or loss for last 10
                 } else {
                     team1gamers[i].setLastTen(Integer.toBinaryString(Integer.parseInt(team1gamers[i].getLastTen(), 2) >> 1));
                     team2gamers[i].setLastTen(Integer.toBinaryString((Integer.parseInt(team2gamers[i].getLastTen(), 2) >> 1) | 512));
@@ -264,22 +293,24 @@ public class GamerController {
             }
             team1gamers[i].setMmr(Math.round((team1gamers[i].getMmr() + points) * 10) / 10d);
             team2gamers[i].setMmr(Math.round((team2gamers[i].getMmr() + points2) * 10) / 10d);
+            //update players in database
+            gamerRepository.save(team1gamers[i]);
+            gamerRepository.save(team2gamers[i]);
             streak = 0;
             streak2 = 0;
         }
+        //save matchGamers and killsAndCapsStats in database
         for (int i = 0; i < 5; i++) {
-            gamerRepository.save(team1gamers[i]);
-            gamerRepository.save(team2gamers[i]);
             MatchGamer matchGamer1 = new MatchGamer();
             MatchGamer matchGamer2 = new MatchGamer();
 
             matchGamer1.setGamer(team1gamers[i]);
             matchGamer1.setMatch(match);
             matchGamer1.setTeam(team1);
-
             matchGamer2.setGamer(team2gamers[i]);
             matchGamer2.setMatch(match);
             matchGamer2.setTeam(team2);
+
             matchGamerRepository.save(matchGamer1);
             matchGamerRepository.save(matchGamer2);
 
@@ -303,8 +334,6 @@ public class GamerController {
         model.addAttribute("team2", team2gamers);
         model.addAttribute("server", server);
         return "gamer/teamsScores";
-
-
     }
 
     public void checkTeam1(Gamer[] team1, String server) {
