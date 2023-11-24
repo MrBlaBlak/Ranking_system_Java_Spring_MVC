@@ -5,10 +5,10 @@ import java.util.Map;
 
 public class CapsStatsDTO {
     private String gamerName;
-    private Map<String, Integer> mapCaps;
-    private Map<String, Integer> mapTotalGames;
-    private Map<String, Integer> mapBestCaps;
-    private Map<String, Double> mapAverageCaps;
+    private Map<String, Integer> mapCaps; // map for number of caps on each map played
+    private Map<String, Integer> mapTotalGames; // map for number of games on each map played
+    private Map<String, Integer> mapBestCaps; // map for highest cap score on each map played
+    private Map<String, Double> mapAverageCaps; // map for average cap score on each map played
 
     public CapsStatsDTO() {
     }

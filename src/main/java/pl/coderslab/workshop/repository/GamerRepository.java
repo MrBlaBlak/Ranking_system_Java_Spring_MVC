@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface GamerRepository extends JpaRepository<Gamer, Integer> {
 
-
+//find most frequently used titan for every gamer
     @Query(value = "SELECT t.gamer_id, MAX(t.max_titan) AS max_titan " +
             "FROM (SELECT mg.gamer_id, k.titan AS max_titan, " +
             "             ROW_NUMBER() OVER (PARTITION BY mg.gamer_id ORDER BY COUNT(k.titan) DESC) AS row_num " +
@@ -23,6 +23,8 @@ public interface GamerRepository extends JpaRepository<Gamer, Integer> {
             nativeQuery = true)
     List<Object[]> findMostFrequentTitanForGamers();
 
+    //get map stats such as wins and losses for each map for each gamer
+
     @Query(value = "SELECT g.name, " +
             "SUM(CASE WHEN t.win_or_loose = 1 THEN 1 ELSE 0 END) AS total_wins, " +
             "SUM(CASE WHEN t.win_or_loose = 0 THEN 1 ELSE 0 END) AS total_losses, " +
@@ -34,7 +36,7 @@ public interface GamerRepository extends JpaRepository<Gamer, Integer> {
             "GROUP BY g.name, m.map", nativeQuery = true)
     List<Object[]> getMapStats();
 
-    //gamer total wins total losses map
+    // get stats such as total kills and max kills for each map as well as number of matches played on each map for a gamer
     @Query(value = "SELECT g.name, SUM(kc.kills), COUNT(m.map), MAX(kc.kills), m.map " +
             "FROM gamers g " +
             "LEFT JOIN match_gamer mg ON g.id = mg.gamer_id " +
@@ -42,7 +44,7 @@ public interface GamerRepository extends JpaRepository<Gamer, Integer> {
             "LEFT JOIN kills_and_caps kc ON kc.match_gamer_id = mg.id " +
             "GROUP BY g.name, m.map ORDER BY g.name", nativeQuery = true)
     List<Object[]> getKillsStats();
-
+    // get stats such as total caps and maxcaps for each map as well as number of matches played on each map for a gamer
     @Query(value = "SELECT g.name, SUM(kc.caps), COUNT(m.map), MAX(kc.caps), m.map " +
             "FROM gamers g " +
             "LEFT JOIN match_gamer mg ON g.id = mg.gamer_id " +
@@ -50,7 +52,7 @@ public interface GamerRepository extends JpaRepository<Gamer, Integer> {
             "LEFT JOIN kills_and_caps kc ON kc.match_gamer_id = mg.id " +
             "GROUP BY g.name, m.map ORDER BY g.name", nativeQuery = true)
     List<Object[]> getCapsStats();
-
+    //get titan stats such as wins and losses for each titan for each gamer
     @Query(value= "SELECT g.name, " +
             "SUM(CASE WHEN t.win_or_loose = 1 THEN 1 ELSE 0 END) AS total_wins, " +
             "SUM(CASE WHEN t.win_or_loose = 0 THEN 1 ELSE 0 END) AS total_losses, " +
@@ -63,6 +65,8 @@ public interface GamerRepository extends JpaRepository<Gamer, Integer> {
             "GROUP BY g.name, kc.titan " +
             "ORDER BY g.name", nativeQuery = true)
     List<Object[]> getTitansStats();
+
+    //find "nemesis" that is count wins and losses of a given player when facing each other player on the opposite team
     @Query(value = "SELECT g2.name AS opponent_name, " +
             "       COUNT(CASE WHEN t1.win_or_loose = 1 and t2.win_or_loose = 0 THEN 1 END) AS wins, " +
             "       COUNT(CASE WHEN t1.win_or_loose = 0 AND t2.win_or_loose = 1 THEN 1 END) AS losses " +
@@ -75,7 +79,7 @@ public interface GamerRepository extends JpaRepository<Gamer, Integer> {
             "GROUP BY g2.name " +
             "ORDER BY COUNT(*) DESC ", nativeQuery = true)
     List<Object[]> findMostFrequentLoserOpponent(@Param("playerId") int playerId);
-
+    //find "bestWingman" that is count wins and losses of a given player when playing with each other player on the same team
     @Query(value = "SELECT g2.name AS opponent_name, " +
             "       COUNT(CASE WHEN t1.win_or_loose = 1 and t2.win_or_loose = 1 THEN 1 END) AS wins, " +
             "       COUNT(CASE WHEN t1.win_or_loose = 0 AND t2.win_or_loose = 0 THEN 1 END) AS losses " +

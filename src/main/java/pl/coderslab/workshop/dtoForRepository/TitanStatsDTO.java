@@ -5,9 +5,9 @@ import java.util.Map;
 
 public class TitanStatsDTO {
     private String gamerName;
-    private Map<String, Integer> titanWins;
-    private Map<String, Integer> titanLosses;
-    private Map<String, Integer> titanWinPercent;
+    private Map<String, Integer> titanWins; // map for number of wins with each titan played
+    private Map<String, Integer> titanLosses;// map for number of losses with each titan played
+    private Map<String, Integer> titanWinPercent; // map for winPercent for each titan played
 
     public TitanStatsDTO(String gamerName) {
         this.gamerName = gamerName;

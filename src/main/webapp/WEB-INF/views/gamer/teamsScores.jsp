@@ -12,35 +12,13 @@
 <html>
 <head>
     <title>Title</title>
-    <style>
-        #formContainer {
-            display: flex;
-        }
-
-        #formContent {
-            flex: 1;
-        }
-
-        #imageDropArea {
-            border: 2px dashed #ccc;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            margin-left: 20px;
-            width: 200px; /* Adjust the width as needed */
-        }
-
-        #previewImage {
-            max-width: 100%;
-            max-height: 500px;
-            margin-top: 20px;
-        }
-    </style>
-
+    <link rel="stylesheet" href="resources/css/teamsScores-styles.css">
 </head>
 <body>
-<script src="${pageContext.request.contextPath}/resources/js/randomData.js"></script>
-<script src="${pageContext.request.contextPath}/resources/js/enableSDWinner.js"></script>
+<%--below script to fill scores with random data--%>
+<%--<script src="resources/js/randomData.js"></script>--%>
+<script src="resources/js/enableSDWinner.js"></script>
+<script src="resources/js/pasteImage.js"></script>
 <div id="formContainer">
     <div id="formContent">
         <form:form method="post" action="${pageContext.request.contextPath}/updateScores" modelAttribute="gamersMatchStatsDTO">
@@ -48,15 +26,14 @@
                 <tr>
                     <td>Team1</td>
                 </tr>
-
                 <c:forEach items="${team1}" var="gamer" varStatus="i">
                     <tr>
                         <td><c:out value="${gamer.id}"/></td>
                         <td><c:out value="${gamer.name}"/></td>
                         <td><c:out value="${gamer.mmr}"/></td>
-                        <td><input type="number" name="team1elims" placeholder="Ilość eliminacji"
+                        <td><input type="number" name="team1elims" placeholder="Elims count"
                                    required="required"/></td>
-                        <td><input type="number" name="team1flags" placeholder="Ilość zdobytych flag" min="0" max="6"
+                        <td><input type="number" name="team1flags" placeholder="Flags count" min="0" max="6"
                                    required="required"/></td>
                         <td>
                             <select name="team1titans" required="required">
@@ -73,7 +50,6 @@
                     </tr>
 
                 </c:forEach>
-
                 <tr>
                     <td>Team2</td>
                 </tr>
@@ -82,9 +58,9 @@
                         <td><c:out value="${gamer.id}"/></td>
                         <td><c:out value="${gamer.name}"/></td>
                         <td><c:out value="${gamer.mmr}"/></td>
-                        <td><input type="number" name="team2elims" placeholder="Ilość eliminacji"
+                        <td><input type="number" name="team2elims" placeholder="Elims count"
                                    required="required"/></td>
-                        <td><input type="number" name="team2flags" placeholder="Ilość zdobytych flag" min="0" max="6"
+                        <td><input type="number" name="team2flags" placeholder="Flags count" min="0" max="6"
                                    required="required"/></td>
                         <td>
                             <select name="team2titans" required="required">
@@ -126,47 +102,9 @@
         <button onClick="javascript:location.href='/'">Return</button>
     </div>
     <div id="imageDropArea" ondrop="drop(event)" ondragover="allowDrop(event)" onpaste="paste(event)">
-    Drop image here or click to select
+    You can drop image with scores here for easier reading
 </div>
-
-    <!-- Image preview area -->
     <img id="previewImage" src="#" alt="Preview" style="display: none;">
 </div>
-<script>
-    function allowDrop(event) {
-        event.preventDefault();
-        document.getElementById("imageDropArea").style.border = "2px dashed #aaa";
-    }
-
-    function drop(event) {
-        event.preventDefault();
-        document.getElementById("imageDropArea").style.border = "2px dashed #ccc";
-
-        handleImage(event.dataTransfer.files[0]);
-    }
-
-    function paste(event) {
-        var items = (event.clipboardData || event.originalEvent.clipboardData).items;
-
-        for (let index in items) {
-            let item = items[index];
-            if (item.kind === 'file') {
-                let blob = item.getAsFile();
-                handleImage(blob);
-            }
-        }
-    }
-
-    function handleImage(file) {
-        let reader = new FileReader();
-
-        reader.onload = function (e) {
-            document.getElementById("previewImage").src = e.target.result;
-            document.getElementById("previewImage").style.display = "block";
-        };
-
-        reader.readAsDataURL(file);
-    }
-</script>
 </body>
 </html>

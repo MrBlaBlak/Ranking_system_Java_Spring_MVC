@@ -5,10 +5,10 @@ import java.util.Map;
 
 public class KillsStatsDTO {
     private String gamerName;
-    private Map<String, Integer> mapKills; // Mapa do liczby eliminacji na danej mapie
-    private Map<String, Integer> mapTotalGames; // Mapa do liczby gier na danej mapie
-    private Map<String, Integer> mapBestKills; // Mapa do największel liczby eliminacji w jednym meczu na danej mapie
-    private Map<String, Double> mapAverageKills;
+    private Map<String, Integer> mapKills; // map for number of kills on each map played
+    private Map<String, Integer> mapTotalGames; // map for number of games on each map played
+    private Map<String, Integer> mapBestKills; // map for highest kill score on each map played
+    private Map<String, Double> mapAverageKills; // map for average kill score on each map played
     public KillsStatsDTO(String gamerName){
         this.gamerName=gamerName;
         this.mapKills= new HashMap<>();

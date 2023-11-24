@@ -33,6 +33,6 @@
         </tr>
     </c:forEach>
 </table>
-<button onClick="javascript:location.href='/'">Return</button>
+<button onClick="javascript:location.href='/pickTeams'">Return</button>
 </body>
 </html>
