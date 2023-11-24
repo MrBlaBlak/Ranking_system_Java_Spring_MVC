@@ -21,14 +21,14 @@
 <script src="resources/js/pasteImage.js"></script>
 <div id="formContainer">
     <div id="formContent">
-        <form:form method="post" action="${pageContext.request.contextPath}/updateScores" modelAttribute="gamersMatchStatsDTO">
+        <form:form method="post" action="${pageContext.request.contextPath}/updateScores"
+                   modelAttribute="gamersMatchStatsDTO">
             <table>
                 <tr>
                     <td>Team1</td>
                 </tr>
                 <c:forEach items="${team1}" var="gamer" varStatus="i">
                     <tr>
-                        <td><c:out value="${gamer.id}"/></td>
                         <td><c:out value="${gamer.name}"/></td>
                         <td><c:out value="${gamer.mmr}"/></td>
                         <td><input type="number" name="team1elims" placeholder="Elims count"
@@ -37,6 +37,7 @@
                                    required="required"/></td>
                         <td>
                             <select name="team1titans" required="required">
+                                <option value="empty" disabled selected="true">-- Titan --</option>
                                 <option value="ion">Ion</option>
                                 <option value="tone">Tone</option>
                                 <option value="monarch">Monarch</option>
@@ -48,14 +49,15 @@
                         </td>
                         <td><input type="hidden" name="team1gamersId" value="${gamer.id}"/></td>
                     </tr>
-
                 </c:forEach>
+                <tr>
+                    <td>---</td>
+                </tr>
                 <tr>
                     <td>Team2</td>
                 </tr>
                 <c:forEach items="${team2}" var="gamer" varStatus="i">
                     <tr>
-                        <td><c:out value="${gamer.id}"/></td>
                         <td><c:out value="${gamer.name}"/></td>
                         <td><c:out value="${gamer.mmr}"/></td>
                         <td><input type="number" name="team2elims" placeholder="Elims count"
@@ -64,6 +66,7 @@
                                    required="required"/></td>
                         <td>
                             <select name="team2titans" required="required">
+                                <option value="empty" disabled selected="true">-- Titan --</option>
                                 <option value="ion">Ion</option>
                                 <option value="tone">Tone</option>
                                 <option value="monarch">Monarch</option>
@@ -79,6 +82,7 @@
                 <tr>
                     <td>
                         <form:select id="map" path="mapPlayed" required="required">
+                            <option value="empty" disabled selected="true">-- Map --</option>
                             <option value="boomtown">boomtown</option>
                             <option value="exo">exo</option>
                             <option value="eden">eden</option>
@@ -90,8 +94,12 @@
                     </td>
                 </tr>
                 <td><form:checkbox id="suddenDeath" path="suddenDeath"/> Sudden Death</td>
-                <td><form:radiobutton  path="suddenDeathWhoWon" id="team1WinRadio" value="team1" disabled="true"/> Team1 Win</td>
-                <td><form:radiobutton  path="suddenDeathWhoWon" id="team2WinRadio" value="team2" disabled="true"/> Team2 Win</td>
+                <td><form:radiobutton path="suddenDeathWhoWon" id="team1WinRadio" value="team1" disabled="true"/> Team1
+                    Win
+                </td>
+                <td><form:radiobutton path="suddenDeathWhoWon" id="team2WinRadio" value="team2" disabled="true"/> Team2
+                    Win
+                </td>
                 <td><form:input type="hidden" path="server" value="${server}"/></td>
 
                 </tr>
@@ -102,8 +110,8 @@
         <button onClick="javascript:location.href='/'">Return</button>
     </div>
     <div id="imageDropArea" ondrop="drop(event)" ondragover="allowDrop(event)" onpaste="paste(event)">
-    You can drop image with scores here for easier reading
-</div>
+        You can drop image with scores here for easier reading
+    </div>
     <img id="previewImage" src="#" alt="Preview" style="display: none;">
 </div>
 </body>
