@@ -1,5 +1,6 @@
 package pl.coderslab.app;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import javax.persistence.EntityManagerFactory;
 @EnableWebMvc
 @ComponentScan(basePackages = "pl.coderslab")
 @EnableTransactionManagement
+@Slf4j
 public class AppConfig extends WebMvcConfigurerAdapter {
     @Bean
     public ViewResolver viewResolver() {
@@ -41,6 +43,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
     }
     @Bean
     public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+        log.info("Initializing JpaTransactionManager...");
         return new JpaTransactionManager(entityManagerFactory);
     }
 }
