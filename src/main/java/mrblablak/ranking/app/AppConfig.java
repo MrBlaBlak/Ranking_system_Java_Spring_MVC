@@ -1,4 +1,4 @@
-package pl.coderslab.app;
+package mrblablak.ranking.app;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,9 +15,9 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.persistence.EntityManagerFactory;
 @Configuration
-@EnableJpaRepositories(basePackages = "pl.coderslab")
+@EnableJpaRepositories(basePackages = "mrblablak.ranking")
 @EnableWebMvc
-@ComponentScan(basePackages = "pl.coderslab")
+@ComponentScan(basePackages = "mrblablak.ranking")
 @EnableTransactionManagement
 public class AppConfig extends WebMvcConfigurerAdapter {
     @Bean
