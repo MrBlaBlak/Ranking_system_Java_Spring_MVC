@@ -16,7 +16,7 @@
 </head>
 <body>
 <%--below script to fill scores with random data--%>
-<%--<script src="resources/js/randomData.js"></script>--%>
+<script src="resources/js/randomData.js"></script>
 <script src="resources/js/enableSDWinner.js"></script>
 <script src="resources/js/pasteImage.js"></script>
 <div id="formContainer">
