@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+
+  app:
+    image: 'mrblablak-ranking:latest'
+    container_name: ranking_app
+    environment:
+      ENV_VAR:
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    depends_on:
+      - mysql_db
+
+  mysql_db:
+    image: mysql/mysql-server:8.0.31-amd64
+    container_name: ranking_app_mysql_db
+    environment:
+      MYSQL_USER: "ranking"
+      MYSQL_PASSWORD: "S3cr3t"
+      MYSQL_ROOT_PASSWORD: "S3cr3t_root"
+      MYSQL_DATABASE:
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - "3306:3306"
+    restart: on-failure
+    volumes:
+      - mysqldb_data:/var/lib/mysql
+
+volumes:
+  mysqldb_data:
