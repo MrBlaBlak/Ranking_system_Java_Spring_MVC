@@ -34,3 +34,13 @@ We welcome contributions from the community to enhance and improve the system.
 Feel free to open issues for bug reports or feature requests.
 
 Let's create a more balanced and competitive gaming experience in Titanfall 2!
+
+## How to run
+Build war and docker image  
+`mvn clean package && docker build -t mrblablak-ranking .`
+
+Run app with docker-compose  
+`docker-compose up`
+
+Stop app    
+`docker-compose down`

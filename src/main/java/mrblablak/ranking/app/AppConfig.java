@@ -1,6 +1,5 @@
-package mrblablak.ranking.app;
+package pl.coderslab.app;
 
-import mrblablak.ranking.workshop.model.Gamer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -16,9 +15,9 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.persistence.EntityManagerFactory;
 @Configuration
-@EnableJpaRepositories(basePackages = "mrblablak.ranking")
+@EnableJpaRepositories(basePackages = "pl.coderslab")
 @EnableWebMvc
-@ComponentScan(basePackages = "mrblablak.ranking")
+@ComponentScan(basePackages = "pl.coderslab")
 @EnableTransactionManagement
 public class AppConfig extends WebMvcConfigurerAdapter {
     @Bean
@@ -44,5 +43,4 @@ public class AppConfig extends WebMvcConfigurerAdapter {
     public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
-
 }
