@@ -1,7 +1,7 @@
 package mrblablak.ranking.workshop.service;
 
 import lombok.RequiredArgsConstructor;
-import mrblablak.ranking.workshop.dtoForForms.GamersMatchStatsDTO;
+import mrblablak.ranking.workshop.dtoForRepository.*;
 import mrblablak.ranking.workshop.model.*;
 import mrblablak.ranking.workshop.repository.*;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -12,21 +12,207 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class StatsService {
     private static final int TEAM_SIZE = 5;
-    private static final int LOBBY_SIZE = 10;
-    private String server;
     private final GamerRepository gamerRepository;
-    private final MatchRepository matchRepository;
-    private final TeamRepository teamRepository;
-    private final KillsAndCapsRepository killsAndCapsRepository;
-    private final MatchGamerRepository matchGamerRepository;
-    private final Gamer[] team1gamers = new Gamer[TEAM_SIZE];
-    private final Gamer[] team2gamers = new Gamer[TEAM_SIZE];
+    public List<Gamer> getAllGamers() {
+        return gamerRepository.findAll();
+    }
+
+    public Map<Integer, String> getMostFrequentTitanForGamer() {
+        List<Object[]> gamerTitans = gamerRepository.findMostFrequentTitanForGamers();
+        Map<Integer, String> gamerTitanMap = new HashMap<>();
+
+        for (Object[] result : gamerTitans) {
+            int gamerId = (int) result[0];
+            String titan = getTitanName((int) result[1]);
+            gamerTitanMap.put(gamerId, titan);
+            System.out.println(gamerTitanMap.get(gamerId));
+        }
+        return gamerTitanMap;
+    }
+
+    public List<MapStatsDTO> getMapStats() {
+        List<Object[]> results = gamerRepository.getMapStats();
+        List<MapStatsDTO> gamerStatsList = new ArrayList<>();
+        for (Object[] result : results) {
+            String gamerName = (String) result[0];
+            Integer mapWins = ((BigDecimal) result[1]).intValue();
+            Integer mapLosses = ((BigDecimal) result[2]).intValue();
+            String map = "";
+            if (result[3] != null) {
+                map = getMapName((int) result[3]);
+            }
+            Integer mapWinPercent = Long.valueOf(Math.round(mapWins * 1.0 / (mapWins + mapLosses) * 100)).intValue();
+
+
+            // czy gracz na liście
+            MapStatsDTO existingGamerStats = gamerStatsList.stream()
+                    .filter(gamerStats -> gamerStats.getGamerName().equals(gamerName))
+                    .findFirst()
+                    .orElse(null);
+
+            if (existingGamerStats != null) {
+                // jeżeli tak to dodaj do mapy
+                existingGamerStats.getMapWins().put(map, mapWins);
+                existingGamerStats.getMapLosses().put(map, mapLosses);
+                existingGamerStats.getMapWinPercent().put(map, mapWinPercent);
+            } else {
+                // jeżeli nie to nowy gracz
+                MapStatsDTO newGamerStats = new MapStatsDTO(gamerName);
+                newGamerStats.getMapWins().put(map, mapWins);
+                newGamerStats.getMapLosses().put(map, mapLosses);
+                newGamerStats.getMapWinPercent().put(map, mapWinPercent);
+                gamerStatsList.add(newGamerStats);
+            }
+        }
+        gamerStatsList.sort(customComparator);
+        return gamerStatsList;
+    }
+
+    public List<TitanStatsDTO> getTitanStats() {
+        List<Object[]> results = gamerRepository.getTitansStats();
+        List<TitanStatsDTO> gamerStatsList = new ArrayList<>();
+
+        for (Object[] result : results) {
+            String gamerName = (String) result[0];
+            Integer titanWins = ((BigDecimal) result[1]).intValue();
+            Integer titanLosses = ((BigDecimal) result[2]).intValue();
+            String titan = "";
+            if (result[3] != null) {
+                titan = getTitanName((int) result[3]);
+            }
+            Integer titanWinPercent = Long.valueOf(Math.round(titanWins * 1.0 / (titanWins + titanLosses) * 100)).intValue();
+
+            // czy gracz na liście
+            TitanStatsDTO existingGamerStats = gamerStatsList.stream()
+                    .filter(gamerStats -> gamerStats.getGamerName().equals(gamerName))
+                    .findFirst()
+                    .orElse(null);
+
+            if (existingGamerStats != null) {
+                // jeżeli tak to dodaj do mapy
+                existingGamerStats.getTitanWins().put(titan, titanWins);
+                existingGamerStats.getTitanLosses().put(titan, titanLosses);
+                existingGamerStats.getTitanWinPercent().put(titan, titanWinPercent);
+            } else {
+                // jeżeli nie to nowy gracz
+                TitanStatsDTO newGamerStats = new TitanStatsDTO(gamerName);
+                newGamerStats.getTitanWins().put(titan, titanWins);
+                newGamerStats.getTitanLosses().put(titan, titanLosses);
+                newGamerStats.getTitanWinPercent().put(titan, titanWinPercent);
+                gamerStatsList.add(newGamerStats);
+            }
+        }
+        return gamerStatsList;
+    }
+
+    public List<KillsStatsDTO> getKillsStats() {
+        List<Object[]> resultsKills = gamerRepository.getKillsStats();
+        List<KillsStatsDTO> gamerStatsList = new ArrayList<>();
+
+        for (Object[] result : resultsKills) {
+            String gamerName = (String) result[0];
+            Integer mapKills = 0;
+            Integer mapTotalGames = 0;
+            Integer mapBestKills = 0;
+            String map = "";
+            if (result[1] != null) {
+                mapKills = ((BigDecimal) result[1]).intValue();
+            }
+            if (result[2] != null) {
+                mapTotalGames = ((BigInteger) result[2]).intValue();
+            }
+            if (result[3] != null) {
+                mapBestKills = (Integer) result[3];
+            }
+            if (result[4] != null) {
+                map = getMapName((int) result[4]);
+            }
+
+            Double mapAverageKills = (Math.round(mapKills * 1.0 / (mapTotalGames) * 100)) / 100.0;
+
+            // czy gracz na liście
+            KillsStatsDTO existingGamerStats = gamerStatsList.stream()
+                    .filter(gamerStats -> gamerStats.getGamerName().equals(gamerName))
+                    .findFirst()
+                    .orElse(null);
+
+            if (existingGamerStats != null) {
+                // jeżeli tak to dodaj do mapy
+                existingGamerStats.getMapKills().put(map, mapKills);
+                existingGamerStats.getMapTotalGames().put(map, mapTotalGames);
+                existingGamerStats.getMapBestKills().put(map, mapBestKills);
+                existingGamerStats.getMapAverageKills().put(map, mapAverageKills);
+            } else {
+                // jeżeli nie to nowy gracz
+                KillsStatsDTO newGamerStats = new KillsStatsDTO(gamerName);
+                newGamerStats.getMapKills().put(map, mapKills);
+                newGamerStats.getMapTotalGames().put(map, mapTotalGames);
+                newGamerStats.getMapBestKills().put(map, mapBestKills);
+                newGamerStats.getMapAverageKills().put(map, mapAverageKills);
+                gamerStatsList.add(newGamerStats);
+            }
+        }
+        return gamerStatsList;
+    }
+
+    public List<CapsStatsDTO> getCapsStats() {
+        List<Object[]> resultsCaps = gamerRepository.getCapsStats();
+        List<CapsStatsDTO> gamerStatsList = new ArrayList<>();
+        String[] mapOrder = {"boomtown", "exo", "eden", "drydock", "angel", "colony", "glitch"};
+
+        for (Object[] result : resultsCaps) {
+            String gamerName = (String) result[0];
+            Integer mapCaps = 0;
+            Integer mapTotalGames = 0;
+            Integer mapBestCap = 0;
+            String map = "";
+            if (result[1] != null) {
+                mapCaps = ((BigDecimal) result[1]).intValue();
+            }
+            if (result[2] != null) {
+                mapTotalGames = ((BigInteger) result[2]).intValue();
+            }
+            if (result[3] != null) {
+                mapBestCap = (Integer) result[3];
+            }
+            if (result[4] != null) {
+                map = getMapName((int) result[4]);
+            }
+
+            Double mapAverageCaps = (Math.round(mapCaps * 1.0 / (mapTotalGames) * 100)) / 100.0;
+
+            // czy gracz na liście
+            CapsStatsDTO existingGamerStats = gamerStatsList.stream()
+                    .filter(gamerStats -> gamerStats.getGamerName().equals(gamerName))
+                    .findFirst()
+                    .orElse(null);
+
+            if (existingGamerStats != null) {
+                // jeżeli tak to dodaj do mapy
+                existingGamerStats.getMapCaps().put(map, mapCaps);
+                existingGamerStats.getMapTotalGames().put(map, mapTotalGames);
+                existingGamerStats.getMapBestCaps().put(map, mapBestCap);
+                existingGamerStats.getMapAverageCaps().put(map, mapAverageCaps);
+            } else {
+                // jeżeli nie to nowy gracz
+                CapsStatsDTO newGamerStats = new CapsStatsDTO(gamerName);
+                newGamerStats.getMapCaps().put(map, mapCaps);
+                newGamerStats.getMapTotalGames().put(map, mapTotalGames);
+                newGamerStats.getMapBestCaps().put(map, mapBestCap);
+                newGamerStats.getMapAverageCaps().put(map, mapAverageCaps);
+                gamerStatsList.add(newGamerStats);
+            }
+        }
+        return gamerStatsList;
+    }
 
     public void addDataIfEmpty() throws IOException {
         long gamerCount = gamerRepository.count();
@@ -44,223 +230,65 @@ public class StatsService {
             }
         }
     }
-    public boolean calculateMmr(GamersMatchStatsDTO gamersMatchStatsDTO) {
-        /*
-      team that scored more flags wins the game; whoWon = 1 -> team 1 won; whoWon = 2 -> team 2 won, suddenDeath is special case when the time
-      ends and both teams have equal flags amount -> last one standing is the winner
-      */
-        server = gamersMatchStatsDTO.getServer();
-        boolean suddenDeath = gamersMatchStatsDTO.isSuddenDeath();
-        String suddenDeathWhoWon = gamersMatchStatsDTO.getSuddenDeathWhoWon();
-        String[] sTeam1titans = gamersMatchStatsDTO.getTeam1titans();
-        String[] sTeam2titans = gamersMatchStatsDTO.getTeam2titans();
-        int[] team1gamersId = gamersMatchStatsDTO.getTeam1gamersId();
-        int[] team1elims = gamersMatchStatsDTO.getTeam1elims();
-        int[] team1flags = gamersMatchStatsDTO.getTeam1flags();
-        int[] team2gamersId = gamersMatchStatsDTO.getTeam2gamersId();
-        int[] team2elims = gamersMatchStatsDTO.getTeam2elims();
-        int[] team2flags = gamersMatchStatsDTO.getTeam2flags();
-        String mapPlayed = gamersMatchStatsDTO.getMapPlayed();
 
-        Match match = new Match();
-        Team team1 = new Team();
-        Team team2 = new Team();
-        MatchGamer[] matchGamers = new MatchGamer[LOBBY_SIZE];
-        KillsAndCaps[] killsAndCaps = new KillsAndCaps[LOBBY_SIZE];
 
-        setMatch(match, mapPlayed);
-        int whoWon = setTeams(team1, team2, team1flags, team2flags, suddenDeathWhoWon);
-        boolean isValidated = updateGamers(whoWon, team1gamersId, team2gamersId, team1, team2, suddenDeath);
-
-        setMatchGamers(matchGamers, match, team1, team2);
-        setKillsAndCaps(killsAndCaps, team1elims, team2elims, team1flags, team2flags, sTeam1titans, sTeam2titans, matchGamers);
-        if (whoWon != 0 && isValidated) {
-            saveData(matchGamers, killsAndCaps, match, team1, team2);
-        }
-        if (isValidated) {
-            return true;
-        } else {
-            return false;
+    private String getTitanName(int titanId) {
+        switch (titanId) {
+            case 0:
+                return "ion";
+            case 1:
+                return "tone";
+            case 2:
+                return "ronin";
+            case 3:
+                return "northstar";
+            case 4:
+                return "monarch";
+            case 5:
+                return "legion";
+            case 6:
+                return "scorch";
+            default:
+                return "none";
         }
     }
 
-    public void setMatch(Match match, String mapPlayed) {
-        match.setMap(Match.Map_Name.valueOf(mapPlayed));
-        match.setServer(server);
-    }
-
-    public int setTeams(Team team1, Team team2,  int[] team1flags, int[] team2flags, String suddenDeathWhoWon) {
-        int team1flagsTotal = 0, team2flagsTotal = 0, whoWon=0;
-        for (int i = 0; i < TEAM_SIZE; i++) {
-            team1flagsTotal += team1flags[i];
-            team2flagsTotal += team2flags[i];
-        }
-        if (team1flagsTotal > team2flagsTotal) {
-            whoWon = 1;
-        } else if (team1flagsTotal < team2flagsTotal) {
-            whoWon = 2;
-        } else {
-            if (suddenDeathWhoWon == null) {
-                whoWon = 0;
-            } else if (suddenDeathWhoWon.equals("team1")) {
-                whoWon = 1;
-            } else if (suddenDeathWhoWon.equals("team2")) {
-                whoWon = 2;
-            }
-
-        }
-        team1.setFlagAdvantage(team1flagsTotal - team2flagsTotal);
-        team2.setFlagAdvantage(team2flagsTotal - team1flagsTotal);
-
-        if (whoWon == 1) {
-            team1.setWinOrLoose(1);
-            team2.setWinOrLoose(0);
-        }
-        if (whoWon == 2) {
-            team1.setWinOrLoose(0);
-            team2.setWinOrLoose(1);
-        }
-        return whoWon;
-    }
-
-    public boolean updateGamers(int whoWon, int[] team1gamersId, int[] team2gamersId, Team team1, Team team2, boolean suddenDeath) {
-        int streak = 0, streak2 = 0;
-        for (int i = 0; i < TEAM_SIZE; i++) {
-            Optional<Gamer> optionalGamer = gamerRepository.findById(team1gamersId[i]);
-
-            if (optionalGamer.isPresent()) {
-                team1gamers[i] = optionalGamer.get();
-            } else {
-                return false;
-            }
-            Optional<Gamer> optionalGamer2 = gamerRepository.findById(team2gamersId[i]);
-
-            if (optionalGamer2.isPresent()) {
-                team2gamers[i] = optionalGamer2.get();
-            } else {
-                return false;
-            }
-            //lastTen is the binary representation of last 10 games where 0 represents a loss and 1 represents a win - so e.g 1011 is: win loss win win
-            int countDown = Integer.parseInt(team1gamers[i].getLastTen(), 2);
-            int countDown2 = Integer.parseInt(team2gamers[i].getLastTen(), 2);
-
-            for (int a = 0; a < 10; a++) {
-                if ((countDown & 1) == 1) streak++;
-                countDown = countDown >> 1;
-                if ((countDown2 & 1) == 1) streak2++;
-                countDown2 = countDown2 >> 1;
-            }
-            //apply bonus from last 10 winrate
-            double points = 0, points2 = 0;
-            if ((streak == 7 || streak == 8) && whoWon == 1) points = 1.2d;
-            else if ((streak == 2 || streak == 3) && whoWon == 2) points = -1.2d;
-            else if (streak > 1 && whoWon == 2) points = -1;
-            else if (streak >= 9 && whoWon == 1) points = 1.5d;
-            else if (streak <= 1 && whoWon == 2) points = -1.5d;
-            else if (streak < 9 && whoWon == 1) points = 1;
-
-            if ((streak2 == 7 || streak2 == 8) && whoWon == 2) points2 = 1.2d;
-            else if ((streak2 == 2 || streak2 == 3) && whoWon == 1) points2 = -1.2d;
-            else if (streak2 > 1 && whoWon == 1) points2 = -1;
-            else if (streak2 >= 9 && whoWon == 2) points2 = 1.5d;
-            else if (streak2 <= 1 && whoWon == 1) points2 = -1.5d;
-            else if (streak2 < 9 && whoWon == 2) points2 = 1;
-
-            //apply bonus from flag advantage
-            if (whoWon == 1) {
-                points = points + (team1.getFlagAdvantage() / 5.0d) - 0.2d;
-                points2 = points2 + (team2.getFlagAdvantage() / 5.0d) + 0.2d;
-                //change score if suddenDeath
-                if (suddenDeath) {
-                    points = 0.5d;
-                    points2 = -0.5d;
-                    //update last ten; suddenDeath result is not counted neither as win or loss for last 10
-                } else {
-                    team1gamers[i].setLastTen(Integer.toBinaryString((Integer.parseInt(team1gamers[i].getLastTen(), 2) >> 1) | 512));
-                    team2gamers[i].setLastTen(Integer.toBinaryString(Integer.parseInt(team2gamers[i].getLastTen(), 2) >> 1));
-                }
-            }
-            if (whoWon == 2) {
-                points2 = points2 + team2.getFlagAdvantage() / 5.0d - 0.2d;
-                points = points + team1.getFlagAdvantage() / 5.0d + 0.2d;
-                //change score if suddenDeath
-                if (suddenDeath) {
-                    points = -0.5d;
-                    points2 = 0.5d;
-                    //update last ten; suddenDeath result is not counted neither as win or loss for last 10
-                } else {
-                    team1gamers[i].setLastTen(Integer.toBinaryString(Integer.parseInt(team1gamers[i].getLastTen(), 2) >> 1));
-                    team2gamers[i].setLastTen(Integer.toBinaryString((Integer.parseInt(team2gamers[i].getLastTen(), 2) >> 1) | 512));
-                }
-            }
-            team1gamers[i].setMmr(Math.round((team1gamers[i].getMmr() + points) * 10) / 10d);
-            team2gamers[i].setMmr(Math.round((team2gamers[i].getMmr() + points2) * 10) / 10d);
-            streak = 0;
-            streak2 = 0;
-
-        }
-        return true;
-    }
-
-    public void setMatchGamers(MatchGamer[] matchGamers, Match match, Team team1, Team team2) {
-        int counter=0;
-        for (int i = 0; i < LOBBY_SIZE; i++) {
-            matchGamers[i] = new MatchGamer();
-            matchGamers[i].setGamer(team1gamers[counter]);
-            matchGamers[i].setMatch(match);
-            matchGamers[i].setTeam(team1);
-            i++;
-            matchGamers[i] = new MatchGamer();
-            matchGamers[i].setGamer(team2gamers[counter]);
-            matchGamers[i].setMatch(match);
-            matchGamers[i].setTeam(team2);
-            counter++;
+    private String getMapName(int mapId) {
+        switch (mapId) {
+            case 0:
+                return "boomtown";
+            case 1:
+                return "exo";
+            case 2:
+                return "eden";
+            case 3:
+                return "drydock";
+            case 4:
+                return "angel";
+            case 5:
+                return "colony";
+            case 6:
+                return "glitch";
+            default:
+                return "none";
         }
     }
 
-    public void setKillsAndCaps(KillsAndCaps[] killsAndCaps, int[] team1elims, int[] team2elims, int[] team1flags, int[] team2flags, String[] sTeam1titans, String[] sTeam2titans, MatchGamer[] matchGamers) {
-        int counter=0;
-        for (int i = 0; i < LOBBY_SIZE; i++) {
-            killsAndCaps[i] = new KillsAndCaps();
-            killsAndCaps[i].setKills(team1elims[counter]);
-            killsAndCaps[i].setCaps(team1flags[counter]);
-            killsAndCaps[i].setTitan(KillsAndCaps.Titan_Name.valueOf(sTeam1titans[counter]));
-            killsAndCaps[i].setMatchGamer(matchGamers[i]);
-            System.out.println(killsAndCaps[i]);
-            i++;
-            killsAndCaps[i] = new KillsAndCaps();
-            killsAndCaps[i].setKills(team2elims[counter]);
-            killsAndCaps[i].setCaps(team2flags[counter]);
-            killsAndCaps[i].setTitan(KillsAndCaps.Titan_Name.valueOf(sTeam2titans[counter]));
-            killsAndCaps[i].setMatchGamer(matchGamers[i]);
-            System.out.println(killsAndCaps[i]);
-            counter++;
+    public String[] getMapOrder() {
+        return new String[]{"boomtown", "exo", "eden", "drydock", "angel", "colony", "glitch"};
+    }
+
+    public String[] getTitanOrder() {
+        return new String[]{"ion", "tone", "monarch", "northstar", "ronin", "legion", "scorch"};
+    }
+
+    Comparator<MapStatsDTO> customComparator = (a, b) -> {
+
+        int nameComparison = a.getGamerName().compareTo(b.getGamerName());
+
+        if (nameComparison != 0) {
+            return nameComparison;
         }
-    }
-
-    public void saveData(MatchGamer[] matchGamers, KillsAndCaps[] killsAndCaps, Match match, Team team1, Team team2) {
-        matchRepository.save(match);
-        teamRepository.save(team1);
-        teamRepository.save(team2);
-        for (int i = 0; i < TEAM_SIZE; i++) {
-            gamerRepository.save(team1gamers[i]);
-            gamerRepository.save(team2gamers[i]);
-        }
-        for (int i = 0; i < LOBBY_SIZE; i++) {
-            matchGamerRepository.save(matchGamers[i]);
-            killsAndCapsRepository.save(killsAndCaps[i]);
-        }
-    }
-
-    public Gamer[] getTeam1() {
-        return team1gamers;
-    }
-
-    public Gamer[] getTeam2() {
-        return team2gamers;
-    }
-
-    public String getServer() {
-        return server;
-    }
+        return 0;
+    };
 }
