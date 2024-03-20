@@ -19,11 +19,8 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class StatsService {
-    private static final int TEAM_SIZE = 5;
+
     private final GamerRepository gamerRepository;
-    public List<Gamer> getAllGamers() {
-        return gamerRepository.findAll();
-    }
 
     public Map<Integer, String> getMostFrequentTitanForGamer() {
         List<Object[]> gamerTitans = gamerRepository.findMostFrequentTitanForGamers();
@@ -166,8 +163,6 @@ public class StatsService {
     public List<CapsStatsDTO> getCapsStats() {
         List<Object[]> resultsCaps = gamerRepository.getCapsStats();
         List<CapsStatsDTO> gamerStatsList = new ArrayList<>();
-        String[] mapOrder = {"boomtown", "exo", "eden", "drydock", "angel", "colony", "glitch"};
-
         for (Object[] result : resultsCaps) {
             String gamerName = (String) result[0];
             Integer mapCaps = 0;
@@ -213,7 +208,33 @@ public class StatsService {
         }
         return gamerStatsList;
     }
+    public List<WingmanNemesisStatsDTO> getNemesisStats(int playerId){
+        List<Object[]> nemesisStatsList = gamerRepository.findMostFrequentLoserOpponent(playerId);
+        List<WingmanNemesisStatsDTO> nemesisStatsDTOList = new ArrayList<>();
+        findWingmanAndNemesis(nemesisStatsList, nemesisStatsDTOList);
+        return nemesisStatsDTOList;
+    }
+    public List<WingmanNemesisStatsDTO> getWingmanStats(int playerId){
+        List<Object[]> wingmanStatsList = gamerRepository.findMostFrequentWinnerTeammate(playerId);
+        List<WingmanNemesisStatsDTO> wingmanStatsDTOList = new ArrayList<>();
+        findWingmanAndNemesis(wingmanStatsList, wingmanStatsDTOList);
+        return wingmanStatsDTOList;
+    }
+    private void findWingmanAndNemesis(List<Object[]> wingmanStatsList, List<WingmanNemesisStatsDTO> nemesisStatsDTOList) {
+        for (Object[] wingmanStats : wingmanStatsList) {
+            WingmanNemesisStatsDTO wingmanStatsDTO = new WingmanNemesisStatsDTO();
+            wingmanStatsDTO.setName((String) wingmanStats[0]);
+            wingmanStatsDTO.setWins(((BigInteger) wingmanStats[1]).intValue());
+            wingmanStatsDTO.setLosses(((BigInteger) wingmanStats[2]).intValue());
+            wingmanStatsDTO.setWinPercentage((int)Math.round(wingmanStatsDTO.getWins()*1.0/ (wingmanStatsDTO.getWins() + wingmanStatsDTO.getLosses())* 100));
+            System.out.println(wingmanStatsDTO.getWinPercentage());
+            nemesisStatsDTOList.add(wingmanStatsDTO);
+        }
+    }
 
+    public Gamer getGamer(int id) {
+        return gamerRepository.findById(id).get();
+    }
     public void addDataIfEmpty() throws IOException {
         long gamerCount = gamerRepository.count();
         if (gamerCount == 0) {
@@ -230,8 +251,6 @@ public class StatsService {
             }
         }
     }
-
-
     private String getTitanName(int titanId) {
         switch (titanId) {
             case 0:
@@ -252,7 +271,6 @@ public class StatsService {
                 return "none";
         }
     }
-
     private String getMapName(int mapId) {
         switch (mapId) {
             case 0:
@@ -273,13 +291,15 @@ public class StatsService {
                 return "none";
         }
     }
-
     public String[] getMapOrder() {
         return new String[]{"boomtown", "exo", "eden", "drydock", "angel", "colony", "glitch"};
     }
 
     public String[] getTitanOrder() {
         return new String[]{"ion", "tone", "monarch", "northstar", "ronin", "legion", "scorch"};
+    }
+    public List<Gamer> getAllGamers() {
+        return gamerRepository.findAll();
     }
 
     Comparator<MapStatsDTO> customComparator = (a, b) -> {
