@@ -33,7 +33,7 @@ public interface GamerRepository extends JpaRepository<Gamer, Integer> {
             "LEFT JOIN match_gamer mg ON g.id = mg.gamer_id " +
             "LEFT JOIN matches m ON mg.match_id = m.id " +
             "LEFT JOIN teams t ON mg.team_id = t.id " +
-            "GROUP BY g.name, m.map", nativeQuery = true)
+            "GROUP BY g.name, m.map ORDER BY g.name", nativeQuery = true)
     List<Object[]> getMapStats();
 
     // get stats such as total kills and max kills for each map as well as number of matches played on each map for a gamer

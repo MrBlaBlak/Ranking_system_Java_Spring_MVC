@@ -69,7 +69,7 @@ public class StatsService {
                 gamerStatsList.add(newGamerStats);
             }
         }
-        gamerStatsList.sort(customComparator);
+//        gamerStatsList.sort(customComparator);
         return gamerStatsList;
     }
 
@@ -302,13 +302,5 @@ public class StatsService {
         return gamerRepository.findAll();
     }
 
-    Comparator<MapStatsDTO> customComparator = (a, b) -> {
-
-        int nameComparison = a.getGamerName().compareTo(b.getGamerName());
-
-        if (nameComparison != 0) {
-            return nameComparison;
-        }
-        return 0;
-    };
+//    Comparator<MapStatsDTO> customComparator = Comparator.comparing(MapStatsDTO::getGamerName);
 }
