@@ -8,7 +8,6 @@ import mrblablak.ranking.workshop.repository.*;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
-
 import static java.lang.Math.abs;
 @Service
 @RequiredArgsConstructor
@@ -58,7 +57,12 @@ public class LobbyService {
 
         return gamers;
     }
-
+    public void setHandicap(){
+        for (int i = 0; i < TEAM_SIZE; i++) {
+            team1gamers[i].setMmr(team1gamers[i].getMmr() - team1gamers[i].serverHandicap(server));
+            team2gamers[i].setMmr(team2gamers[i].getMmr() - team2gamers[i].serverHandicap(server));
+        }
+    }
     private void prepareTeamsFromGamers(Gamer[] gamers) {
         for (int i = 0; i < TEAM_SIZE; i++) {
             team1gamers[i].cloneValues(gamers[i]);
@@ -68,7 +72,7 @@ public class LobbyService {
 
     private void calculateAndAssignTeams(Gamer[] gamers) {
         double perfectBalance = checkPerfectBalance(gamers);
-        int gamersCount = 0, counter = 0;
+        int gamersCount = 0;
         double mmrCounter = 0, currentDiffFromPerfectBalance, bestScoreSoFar = 0, smallestDiff = 1000;
 
         for (int i = 1023; i > 0; i--) {
@@ -82,11 +86,11 @@ public class LobbyService {
             if (currentDiffFromPerfectBalance < smallestDiff && gamersCount == 5) {
                 bestScoreSoFar = mmrCounter;
                 smallestDiff = currentDiffFromPerfectBalance;
-                assignTeam1Gamers(gamers, i, counter);
+                assignTeam1Gamers(gamers, i);
             }
             mmrCounter = 0;
             gamersCount = 0;
-            counter = 0;
+
         }
 
         double bestScoreSoFar2 = assignTeam2Gamers(gamers);
@@ -95,7 +99,8 @@ public class LobbyService {
         System.out.println("team nr2 points - " + Math.round(bestScoreSoFar2 * 10) / 10f + "\n");
     }
 
-    private void assignTeam1Gamers(Gamer[] gamers, int bitmask, int counter) {
+    private void assignTeam1Gamers(Gamer[] gamers, int bitmask) {
+        int counter=0;
         for (int a = 0; a < LOBBY_SIZE; ++a) {
             if (((bitmask >> a) & 1) == 1) {
                 team1gamers[counter] = new Gamer();
@@ -188,11 +193,8 @@ public class LobbyService {
         if (whoWon != 0 && isValidated) {
             saveData(matchGamers, killsAndCaps, match, team1, team2);
         }
-        if (isValidated) {
-            return true;
-        } else {
-            return false;
-        }
+        setHandicap();
+        return isValidated;
     }
 
     public void setMatch(Match match, String mapPlayed) {
@@ -251,7 +253,7 @@ public class LobbyService {
             } else {
                 return false;
             }
-            //lastTen is the binary representation of last 10 games where 0 represents a loss and 1 represents a win - so e.g 1011 is: win loss win win
+            //lastTen is the binary representation of last 10 games where 0 represents a loss and 1 represents a win - so e.g. 1011 is: win loss win win
             int countDown = Integer.parseInt(team1gamers[i].getLastTen(), 2);
             int countDown2 = Integer.parseInt(team2gamers[i].getLastTen(), 2);
 
@@ -285,7 +287,7 @@ public class LobbyService {
                 if (suddenDeath) {
                     points = 0.5d;
                     points2 = -0.5d;
-                    //update last ten; suddenDeath result is not counted neither as win or loss for last 10
+                    //update last ten; suddenDeath result is not counted neither as win nor loss for last 10
                 } else {
                     team1gamers[i].setLastTen(Integer.toBinaryString((Integer.parseInt(team1gamers[i].getLastTen(), 2) >> 1) | 512));
                     team2gamers[i].setLastTen(Integer.toBinaryString(Integer.parseInt(team2gamers[i].getLastTen(), 2) >> 1));
@@ -298,7 +300,7 @@ public class LobbyService {
                 if (suddenDeath) {
                     points = -0.5d;
                     points2 = 0.5d;
-                    //update last ten; suddenDeath result is not counted neither as win or loss for last 10
+                    //update last ten; suddenDeath result is not counted neither as win nor loss for last 10
                 } else {
                     team1gamers[i].setLastTen(Integer.toBinaryString(Integer.parseInt(team1gamers[i].getLastTen(), 2) >> 1));
                     team2gamers[i].setLastTen(Integer.toBinaryString((Integer.parseInt(team2gamers[i].getLastTen(), 2) >> 1) | 512));
@@ -337,14 +339,12 @@ public class LobbyService {
             killsAndCaps[i].setCaps(team1flags[counter]);
             killsAndCaps[i].setTitan(KillsAndCaps.Titan_Name.valueOf(sTeam1titans[counter]));
             killsAndCaps[i].setMatchGamer(matchGamers[i]);
-            System.out.println(killsAndCaps[i]);
             i++;
             killsAndCaps[i] = new KillsAndCaps();
             killsAndCaps[i].setKills(team2elims[counter]);
             killsAndCaps[i].setCaps(team2flags[counter]);
             killsAndCaps[i].setTitan(KillsAndCaps.Titan_Name.valueOf(sTeam2titans[counter]));
             killsAndCaps[i].setMatchGamer(matchGamers[i]);
-            System.out.println(killsAndCaps[i]);
             counter++;
         }
     }

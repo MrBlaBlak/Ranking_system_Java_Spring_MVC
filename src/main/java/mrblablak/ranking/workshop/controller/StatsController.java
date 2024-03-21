@@ -5,15 +5,14 @@ import mrblablak.ranking.workshop.service.StatsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import java.io.IOException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import java.io.IOException;
 
 
 @Controller
 @RequiredArgsConstructor
 public class StatsController {
-
 
     private final StatsService statsService;
 
@@ -61,13 +60,11 @@ public class StatsController {
 
     @GetMapping("/nemesis/{playerId}")
     public String getWingmanAndNemesisStats(@PathVariable int playerId, Model model) {
-        model.addAttribute("nemesisStatsList", statsService.getNemesisStats(playerId));
-        model.addAttribute("wingmanStatsList", statsService.getWingmanStats(playerId));
+        model.addAttribute("nemesisStatsList", statsService.getWingmanAndNemesisStats(playerId, "nemesis"));
+        model.addAttribute("wingmanStatsList", statsService.getWingmanAndNemesisStats(playerId, "wingman"));
         model.addAttribute("name", statsService.getGamer(playerId).getName());
         return "gamer/statsNemesis";
     }
-
-
 }
 
 

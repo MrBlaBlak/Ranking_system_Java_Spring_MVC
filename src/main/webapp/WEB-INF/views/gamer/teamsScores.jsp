@@ -25,12 +25,18 @@
                    modelAttribute="gamersMatchStatsDTO">
             <table>
                 <tr>
-                    <td>Team1</td>
+                    <th>Team 1</th>
+                    <th>MMR</th>
+                    <th>Handicap</th>
+                    <th>Eliminations</th>
+                    <th>Flags</th>
+                    <th>Titan</th>
                 </tr>
                 <c:forEach items="${team1}" var="gamer" varStatus="i">
                     <tr>
                         <td><c:out value="${gamer.name}"/></td>
                         <td><c:out value="${gamer.mmr}"/></td>
+                        <td><c:out value="${-gamer.serverHandicap(server)}"/></td>
                         <td><input type="number" name="team1elims" placeholder="Elims count"
                                    required="required"/></td>
                         <td><input type="number" name="team1flags" placeholder="Flags count" min="0" max="6"
@@ -50,16 +56,21 @@
                         <td><input type="hidden" name="team1gamersId" value="${gamer.id}"/></td>
                     </tr>
                 </c:forEach>
+            </table>
+            <table>
                 <tr>
-                    <td>---</td>
-                </tr>
-                <tr>
-                    <td>Team2</td>
+                    <th>Team 1</th>
+                    <th>MMR</th>
+                    <th>Handicap</th>
+                    <th>Eliminations</th>
+                    <th>Flags</th>
+                    <th>Titan</th>
                 </tr>
                 <c:forEach items="${team2}" var="gamer" varStatus="i">
                     <tr>
                         <td><c:out value="${gamer.name}"/></td>
                         <td><c:out value="${gamer.mmr}"/></td>
+                        <td><c:out value="${-gamer.serverHandicap(server)}"/></td>
                         <td><input type="number" name="team2elims" placeholder="Elims count"
                                    required="required"/></td>
                         <td><input type="number" name="team2flags" placeholder="Flags count" min="0" max="6"
@@ -79,6 +90,11 @@
                         <td><input type="hidden" name="team2gamersId" value="${gamer.id}"/></td>
                     </tr>
                 </c:forEach>
+            </table>
+            <table>
+                <tr>
+                    <th>Map</th>
+                </tr>
                 <tr>
                     <td>
                         <form:select id="map" path="mapPlayed" required="required">
@@ -93,15 +109,15 @@
                         </form:select>
                     </td>
                 </tr>
-                <td><form:checkbox id="suddenDeath" path="suddenDeath"/> Sudden Death</td>
-                <td><form:radiobutton path="suddenDeathWhoWon" id="team1WinRadio" value="team1" disabled="true"/> Team1
-                    Win
-                </td>
-                <td><form:radiobutton path="suddenDeathWhoWon" id="team2WinRadio" value="team2" disabled="true"/> Team2
-                    Win
-                </td>
-                <td><form:input type="hidden" path="server" value="${server}"/></td>
-
+                <tr>
+                    <td><form:checkbox id="suddenDeath" path="suddenDeath"/> Sudden Death</td>
+                    <td><form:radiobutton path="suddenDeathWhoWon" id="team1WinRadio" value="team1" disabled="true"/> Team1
+                        Win
+                    </td>
+                    <td><form:radiobutton path="suddenDeathWhoWon" id="team2WinRadio" value="team2" disabled="true"/> Team2
+                        Win
+                    </td>
+                    <td><form:input type="hidden" path="server" value="${server}"/></td>
                 </tr>
             </table>
             <input type="submit" value="Submit"/>
