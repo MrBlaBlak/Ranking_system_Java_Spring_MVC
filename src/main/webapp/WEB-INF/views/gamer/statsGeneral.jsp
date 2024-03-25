@@ -34,10 +34,10 @@
                     -
                 </c:if>
             </td>
-            <td><button onClick="javascript:location.href='/nemesis/${gamer.id}'">Nemesis</button></td>
+            <td><button onClick="javascript:location.href='../nemesis/${gamer.id}'">Nemesis</button></td>
         </tr>
     </c:forEach>
 </table>
-<button onClick="javascript:location.href='/pickTeams'">Return</button>
+<button onClick="javascript:location.href='../pickTeams'">Return</button>
 </body>
 </html>

@@ -123,7 +123,7 @@
             <input type="submit" value="Submit"/>
         </form:form>
 
-        <button onClick="javascript:location.href='/'">Return</button>
+        <button onClick="javascript:location.href='pickTeams'">Return</button>
     </div>
     <div id="imageDropArea" ondrop="drop(event)" ondragover="allowDrop(event)" onpaste="paste(event)">
         You can drop image with scores here for easier reading

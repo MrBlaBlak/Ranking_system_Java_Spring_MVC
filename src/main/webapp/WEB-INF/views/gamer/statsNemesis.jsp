@@ -68,7 +68,7 @@
         </table>
     </div>
 </c:if>
-<button onClick="javascript:location.href='/stats/general'">Return</button>
+<button onClick="javascript:location.href='../stats/general'">Return</button>
 
 </body>
 </html>

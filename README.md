@@ -36,6 +36,8 @@ Feel free to open issues for bug reports or feature requests.
 Let's create a more balanced and competitive gaming experience in Titanfall 2!
 
 ## How to run
+
+### Docker
 Build war and docker image  
 `mvn clean package && docker build -t mrblablak-ranking .`
 
@@ -44,3 +46,31 @@ Run app with docker-compose
 
 Stop app    
 `docker-compose down`
+
+Open a web browser and go to http://localhost:8080/rankingSystemJavaSpringMVC-1
+
+### Tomcat
+
+#### Configure Persistence Settings:
+Open the persistence.xml file located in the src/main/resources/META-INF directory of your project.
+Verify that the javax.persistence.jdbc.url, javax.persistence.jdbc.user, and javax.persistence.jdbc.password properties match your MySQL configuration.
+
+#### Build the project using Maven:
+
+`mvn clean install`
+
+#### Deploy the WAR file to Apache Tomcat:
+
+Copy the generated WAR file (usually located in the target directory) to the webapps directory of your Tomcat installation.
+
+#### Start Tomcat:
+
+Navigate to the Tomcat installation directory.
+Start Tomcat using the startup script:
+
+`./bin/startup.sh`     # For Unix-based systems
+
+`./bin/startup.bat`    # For Windows
+
+#### Access the application:
+Open a web browser and go to http://localhost:8080/rankingSystemJavaSpringMVC-1
