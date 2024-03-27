@@ -4,6 +4,7 @@
     <option name="state">
       <map>
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/gamer/pickTeams.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/gamer" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/gamer/statsGeneral.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/gamer" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/gamer/statsMaps.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/gamer" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/gamer/teamsScores.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/gamer" />
       </map>
