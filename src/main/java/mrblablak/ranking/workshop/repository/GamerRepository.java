@@ -11,6 +11,7 @@ import java.util.List;
 public interface GamerRepository extends JpaRepository<Gamer, Integer> {
 
 //find most frequently used titan for every gamer
+    List<Gamer> findAllByOrderByMmrDesc();
     @Query(value = "SELECT t.gamer_id, MAX(t.max_titan) AS max_titan " +
             "FROM (SELECT mg.gamer_id, k.titan AS max_titan, " +
             "             ROW_NUMBER() OVER (PARTITION BY mg.gamer_id ORDER BY COUNT(k.titan) DESC) AS row_num " +

@@ -11,28 +11,68 @@
 <html>
 <head>
     <title>Stats Maps</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        thead th {
+            width: 33.33%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            text-align: center;
+            padding: 3px 0px !important;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            vertical-align: middle !important;
+        }
+
+        .map-image {
+            width: 100%;
+            height: auto;
+        }
+
+    </style>
 </head>
 <body>
-<table border="1">
-    <tr>
-        <th>Gamer Name</th>
-        <c:forEach items="${mapOrder}" var="map">
-            <th>${map} Wins</th>
-            <th>${map} Losses</th>
-            <th>${map} Win%</th>
-        </c:forEach>
-    </tr>
-    <c:forEach items="${gamerStatsList}" var="gamerStats">
+
+    <table class="table table-striped">
+        <thead class="thead-dark">
         <tr>
-            <td>${gamerStats.gamerName}</td>
+            <th>Gamer Name</th>
             <c:forEach items="${mapOrder}" var="map">
-                <td>${gamerStats.mapWins[map]}</td>
-                <td>${gamerStats.mapLosses[map]}</td>
-                <td>${gamerStats.mapWinPercent[map]}%</td>
+
+                <th colspan="3" class="position-relative">
+                    <img src="../resources/images/maps/${map}.webp" alt="${map}" title="${map}" class="map-image">
+                </th>
             </c:forEach>
         </tr>
-    </c:forEach>
-</table>
-<button onClick="javascript:location.href='../pickTeams'">Return</button>
+        <tr>
+            <th><button onClick="javascript:location.href='../pickTeams'" class="btn btn-secondary return-button">Return</button></th>
+            <c:forEach items="${mapOrder}" var="map">
+
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Win%</th>
+            </c:forEach>
+        </tr>
+        </thead>
+        <tbody>
+        <c:forEach items="${gamerStatsList}" var="gamerStats">
+            <tr>
+                <td>${gamerStats.gamerName}</td>
+                <c:forEach items="${mapOrder}" var="map">
+
+                    <td>${gamerStats.mapWins[map]}</td>
+                    <td>${gamerStats.mapLosses[map]}</td>
+                    <td>${gamerStats.mapWinPercent[map]}%</td>
+                </c:forEach>
+            </tr>
+        </c:forEach>
+        </tbody>
+    </table>
 </body>
 </html>

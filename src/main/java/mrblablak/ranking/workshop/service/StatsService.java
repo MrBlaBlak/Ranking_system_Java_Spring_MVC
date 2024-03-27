@@ -296,7 +296,7 @@ public class StatsService {
         return new String[]{"ion", "tone", "monarch", "northstar", "ronin", "legion", "scorch"};
     }
     public List<Gamer> getAllGamers() {
-        return gamerRepository.findAll();
+        return gamerRepository.findAllByOrderByMmrDesc();
     }
 
 //    Comparator<MapStatsDTO> customComparator = Comparator.comparing(MapStatsDTO::getGamerName);
