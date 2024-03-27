@@ -7,35 +7,66 @@
     <title>Title</title>
     <script src="resources/js/disableSelected.js"></script>
     <script src="resources/js/validatePickTeams.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 20px;
+        }
+        .btn-group {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-<h1>Pick gamers</h1>
+<div class="container">
+    <h1 class="text-center mb-4">Pick Gamers</h1>
+    <form:form method="post" modelAttribute="gamersDTO" onsubmit="return validateForm()">
+        <div class="row">
+            <div class="col-md-6">
+                <c:forEach var="i" begin="1" end="5">
+                    <select name="gamersList" id="player${i}" class="form-control mb-3">
+                        <option value="empty" disabled selected="true">-- Player${i} --</option>
+                        <c:forEach items="${gamers}" var="gamer">
+                            <option value="${gamer.id}">${gamer.name}</option>
+                        </c:forEach>
+                    </select>
+                </c:forEach>
+            </div>
+            <div class="col-md-6">
+                <c:forEach var="i" begin="6" end="10">
+                    <select name="gamersList" id="player${i}" class="form-control mb-3">
+                        <option value="empty" disabled selected="true">-- Player${i} --</option>
+                        <c:forEach items="${gamers}" var="gamer">
+                            <option value="${gamer.id}">${gamer.name}</option>
+                        </c:forEach>
+                    </select>
+                </c:forEach>
+            </div>
+        </div>
+        <div class="form-group">
+            <form:select path="server" class="form-control mb-3">
+                <option value="empty" disabled selected="true">-- Server --</option>
+                <c:forEach items="${servers}" var="server" varStatus="status">
+                    <option value="${server}">${server}</option>
+                </c:forEach>
+            </form:select>
+        </div>
+        <div class="form-group">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="teamsReady" path="teamsReady">
+                <label class="form-check-label" for="teamsReady">Pick Manually</label>
+            </div>
+        </div>
+        <input type="submit" value="Submit" class="btn btn-primary mb-3">
+    </form:form>
 
-<form:form method="post" modelAttribute="gamersDTO" onsubmit="return validateForm()">
-    <c:forEach var="i" begin="1" end="10">
-        <select name="gamersList" id="player${i}">
-            <option value="empty" disabled selected="true">-- Player${i} --</option>
-            <c:forEach items="${gamers}" var="gamer">
-                <option value="${gamer.id}">${gamer.name}</option>
-            </c:forEach>
-        </select>
-    </c:forEach>
-    <form:select path="server">
-        <option value="empty" disabled selected="true">-- Server --</option>
-        <c:forEach items="${servers}" var="server" varStatus="status">
-            <option value="${server}">${server}</option>
-        </c:forEach>
-    </form:select>
-    <label for="teamsReady">Pick Manually</label>
-    <form:checkbox path="teamsReady" id="teamsReady"/>
-    <input type="submit" value="Submit"/>
-</form:form>
-
-<button onClick="javascript:location.href='stats/general'">Stats</button>
-<button onClick="javascript:location.href='stats/maps'">MapStats</button>
-<button onClick="javascript:location.href='stats/kills'">KillsStats</button>
-<button onClick="javascript:location.href='stats/caps'">CapsStats</button>
-<button onClick="javascript:location.href='stats/titans'">TitanStats</button>
-
+    <div class="btn-group d-flex justify-content-center" role="group">
+        <button type="button" class="btn btn-secondary mr-2" onClick="javascript:location.href='stats/general'">Stats</button>
+        <button type="button" class="btn btn-secondary mr-2" onClick="javascript:location.href='stats/maps'">MapStats</button>
+        <button type="button" class="btn btn-secondary mr-2" onClick="javascript:location.href='stats/kills'">KillsStats</button>
+        <button type="button" class="btn btn-secondary mr-2" onClick="javascript:location.href='stats/caps'">CapsStats</button>
+        <button type="button" class="btn btn-secondary" onClick="javascript:location.href='stats/titans'">TitanStats</button>
+    </div>
+</div>
 </body>
 </html>

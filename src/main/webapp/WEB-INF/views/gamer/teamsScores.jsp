@@ -111,24 +111,28 @@
                 </tr>
                 <tr>
                     <td><form:checkbox id="suddenDeath" path="suddenDeath"/> Sudden Death</td>
-                    <td><form:radiobutton path="suddenDeathWhoWon" id="team1WinRadio" value="team1" disabled="true"/> Team1
+                    <td><form:radiobutton path="suddenDeathWhoWon" id="team1WinRadio" value="team1" disabled="true"/>
+                        Team1
                         Win
                     </td>
-                    <td><form:radiobutton path="suddenDeathWhoWon" id="team2WinRadio" value="team2" disabled="true"/> Team2
+                    <td><form:radiobutton path="suddenDeathWhoWon" id="team2WinRadio" value="team2" disabled="true"/>
+                        Team2
                         Win
                     </td>
                     <td><form:input type="hidden" path="server" value="${server}"/></td>
                 </tr>
             </table>
             <input type="submit" value="Submit"/>
+            <button style="display: inline;" onClick="javascript:location.href='pickTeams'">Return</button>
         </form:form>
 
-        <button onClick="javascript:location.href='pickTeams'">Return</button>
+
     </div>
-    <div id="imageDropArea" ondrop="drop(event)" ondragover="allowDrop(event)" onpaste="paste(event)">
-        You can drop image with scores here for easier reading
-    </div>
-    <img id="previewImage" src="#" alt="Preview" style="display: none;">
 </div>
+<div id="imageDropArea" onpaste="paste(event)">
+    You can paste image with scores here for easier reading
+</div>
+<img id="previewImage" src="#" alt="Preview" style="display: none; padding-top: 10px;">
+
 </body>
 </html>
