@@ -12,30 +12,7 @@
 <head>
     <title>Stats Maps</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        thead th {
-            width: 33.33%;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            text-align: center;
-            padding: 3px 0px !important;
-            border: 1px solid #ddd;
-        }
-        th {
-            background-color: #f2f2f2;
-            vertical-align: middle !important;
-        }
-
-        .map-image {
-            width: 100%;
-            height: auto;
-        }
-
-    </style>
+    <link rel="stylesheet" href="../resources/css/statsPages.css">
 </head>
 <body>
 

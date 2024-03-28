@@ -11,17 +11,31 @@
 <html>
 <head>
   <title>Stats Maps</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../resources/css/statsPages.css">
 </head>
 <body>
-<table border="1">
+<table class="table table-striped">
+  <thead class="thead-dark">
   <tr>
     <th>Gamer Name</th>
     <c:forEach items="${mapOrder}" var="map">
-      <th>${map} Games</th>
-      <th>${map} Best</th>
-      <th>${map} Average</th>
+
+      <th colspan="3" class="position-relative">
+        <img src="../resources/images/maps/${map}.webp" alt="${map}" title="${map}" class="map-image">
+      </th>
     </c:forEach>
   </tr>
+  <tr>
+    <th><button onClick="javascript:location.href='../pickTeams'" class="btn btn-secondary return-button">Return</button></th>
+    <c:forEach items="${mapOrder}" var="map">
+
+      <th>Games</th>
+      <th>Best</th>
+      <th>Average</th>
+    </c:forEach>
+  </tr>
+  </thead>
   <c:forEach items="${gamerStatsList}" var="gamerStats">
     <tr>
       <td>${gamerStats.gamerName}</td>

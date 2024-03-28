@@ -10,65 +10,77 @@
 <html>
 <head>
     <title>Nemesis Stats</title>
-    <style> .stats-column {
-        width: 50%;
-        float: left;
-    }
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .stats-column {
+            width: 50%;
+            float: left;
+        }
+        .return-button {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 
 <c:if test="${not empty nemesisStatsList}">
-    <div class="stats-column">
-        <h2>${name} Nemesis Stats</h2>
-        <table border="1">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Wins</th>
-                <th>Losses</th>
-                <th>Win Percentage</th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach var="nemesisStats" items="${nemesisStatsList}">
+    <div class="container">
+        <div class="stats-column">
+            <h2>${name} Nemesis Stats</h2>
+            <table class="table table-striped">
+                <thead class="thead-dark">
                 <tr>
-                    <td>${nemesisStats.name}</td>
-                    <td>${nemesisStats.wins}</td>
-                    <td>${nemesisStats.losses}</td>
-                    <td>${nemesisStats.winPercentage}%</td>
+                    <th>Name</th>
+                    <th>Wins</th>
+                    <th>Losses</th>
+                    <th>Win Percentage</th>
                 </tr>
-            </c:forEach>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                <c:forEach var="nemesisStats" items="${nemesisStatsList}">
+                    <tr>
+                        <td>${nemesisStats.name}</td>
+                        <td>${nemesisStats.wins}</td>
+                        <td>${nemesisStats.losses}</td>
+                        <td>${nemesisStats.winPercentage}%</td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+        </div>
     </div>
 </c:if>
 <c:if test="${not empty wingmanStatsList}">
-    <div class="stats-column">
-        <h2>${name} Wingman Stats</h2>
-        <table border="1">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Wins</th>
-                <th>Losses</th>
-                <th>Win Percentage</th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach var="wingmanStats" items="${wingmanStatsList}">
+    <div class="container">
+        <div class="stats-column">
+            <h2>${name} Wingman Stats</h2>
+            <table class="table table-striped">
+                <thead class="thead-dark">
                 <tr>
-                    <td>${wingmanStats.name}</td>
-                    <td>${wingmanStats.wins}</td>
-                    <td>${wingmanStats.losses}</td>
-                    <td>${wingmanStats.winPercentage}%</td>
+                    <th>Name</th>
+                    <th>Wins</th>
+                    <th>Losses</th>
+                    <th>Win Percentage</th>
                 </tr>
-            </c:forEach>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                <c:forEach var="wingmanStats" items="${wingmanStatsList}">
+                    <tr>
+                        <td>${wingmanStats.name}</td>
+                        <td>${wingmanStats.wins}</td>
+                        <td>${wingmanStats.losses}</td>
+                        <td>${wingmanStats.winPercentage}%</td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+        </div>
     </div>
 </c:if>
-<button onClick="javascript:location.href='../stats/general'">Return</button>
+<div class="container">
+    <button onClick="javascript:location.href='../stats/general'" class="btn btn-secondary return-button">Return
+    </button>
+</div>
 
 </body>
 </html>

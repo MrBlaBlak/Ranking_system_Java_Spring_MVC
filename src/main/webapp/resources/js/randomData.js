@@ -1,16 +1,5 @@
-// Funkcja do generowania losowej liczby z zakresu 15-45
-function getRandomOption(options) {
-    let randomIndex = Math.floor(Math.random() * options.length);
-    return options[randomIndex];
-}
-function getRandomValue() {
-    return Math.floor(Math.random() * (45 - 15 + 1)) + 15;
-}
-function getRandomFlagValue() {
-    return Math.floor(Math.random() * 3);
-}
 
-window.addEventListener('load', function() {
+function getRandomData() {
     let team1Elims = document.getElementsByName('team1elims');
     let team2Elims = document.getElementsByName('team2elims');
     let team1Flags = document.getElementsByName('team1flags');
@@ -39,4 +28,15 @@ window.addEventListener('load', function() {
     for (let i = 0; i < team2Titans.length; i++) {
         team2Titans[i].value = getRandomOption(titanOptions);
     }
-});
+}
+function getRandomOption(options) {
+    let randomIndex = Math.floor(Math.random() * options.length);
+    return options[randomIndex];
+}
+function getRandomValue() {
+    return Math.floor(Math.random() * (45 - 15 + 1)) + 15;
+}
+function getRandomFlagValue() {
+    return Math.floor(Math.random() * 3);
+}
+

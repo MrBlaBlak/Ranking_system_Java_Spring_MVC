@@ -7,6 +7,8 @@
     <title>Title</title>
     <script src="resources/js/disableSelected.js"></script>
     <script src="resources/js/validatePickTeams.js"></script>
+    <script src="resources/js/selectRandomPlayersAndServer.js"></script>
+
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -19,6 +21,14 @@
 </head>
 <body>
 <div class="container">
+    <div class="btn-group d-flex justify-content-center" role="group">
+        <button type="button" class="btn btn-secondary mr-2" onClick="javascript:location.href='stats/general'">Stats</button>
+        <button type="button" class="btn btn-secondary mr-2" onClick="javascript:location.href='stats/maps'">MapStats</button>
+        <button type="button" class="btn btn-secondary mr-2" onClick="javascript:location.href='stats/kills'">KillsStats</button>
+        <button type="button" class="btn btn-secondary mr-2" onClick="javascript:location.href='stats/caps'">CapsStats</button>
+        <button type="button" class="btn btn-secondary mr-2" onClick="javascript:location.href='stats/titans'">TitanStats</button>
+        <button type="button" class="btn btn-primary mr-2" onclick="randomlySelectPlayersAndServer()">SelectRandomPlayers</button>
+    </div>
     <h1 class="text-center mb-4">Pick Gamers</h1>
     <form:form method="post" modelAttribute="gamersDTO" onsubmit="return validateForm()">
         <div class="row">
@@ -60,13 +70,6 @@
         <input type="submit" value="Submit" class="btn btn-primary mb-3">
     </form:form>
 
-    <div class="btn-group d-flex justify-content-center" role="group">
-        <button type="button" class="btn btn-secondary mr-2" onClick="javascript:location.href='stats/general'">Stats</button>
-        <button type="button" class="btn btn-secondary mr-2" onClick="javascript:location.href='stats/maps'">MapStats</button>
-        <button type="button" class="btn btn-secondary mr-2" onClick="javascript:location.href='stats/kills'">KillsStats</button>
-        <button type="button" class="btn btn-secondary mr-2" onClick="javascript:location.href='stats/caps'">CapsStats</button>
-        <button type="button" class="btn btn-secondary" onClick="javascript:location.href='stats/titans'">TitanStats</button>
-    </div>
 </div>
 </body>
 </html>
