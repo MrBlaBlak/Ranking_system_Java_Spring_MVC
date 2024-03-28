@@ -8,7 +8,6 @@
     <script src="resources/js/disableSelected.js"></script>
     <script src="resources/js/validatePickTeams.js"></script>
     <script src="resources/js/selectRandomPlayersAndServer.js"></script>
-
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -63,10 +62,11 @@
         </div>
         <div class="form-group">
             <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="teamsReady" path="teamsReady">
+                <form:checkbox path="teamsReady" id="teamsReady" class="form-check-input"/>
                 <label class="form-check-label" for="teamsReady">Pick Manually</label>
-            </div>
+
         </div>
+
         <input type="submit" value="Submit" class="btn btn-primary mb-3">
     </form:form>
 

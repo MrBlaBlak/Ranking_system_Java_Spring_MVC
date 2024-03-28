@@ -21,7 +21,7 @@
 <%--below script to fill scores with random data--%>
 
 <div class="container">
-    <div class="row justify-content-center">
+    <div class="row">
         <div class="col-lg-8">
             <form:form method="post" action="${pageContext.request.contextPath}/updateScores"
                        modelAttribute="gamersMatchStatsDTO">
@@ -43,9 +43,11 @@
                                 <td><c:out value="${gamer.name}"/></td>
                                 <td><c:out value="${gamer.mmr}"/></td>
                                 <td><c:out value="${-gamer.serverHandicap(server)}"/></td>
-                                <td><input type="number" name="team1elims" class="form-control" placeholder="Elims count"
+                                <td><input type="number" name="team1elims" class="form-control"
+                                           placeholder="Elims count"
                                            required="required"/></td>
-                                <td><input type="number" name="team1flags" class="form-control" placeholder="Flags count" min="0" max="6"
+                                <td><input type="number" name="team1flags" class="form-control"
+                                           placeholder="Flags count" min="0" max="6"
                                            required="required"/></td>
                                 <td>
                                     <select name="team1titans" class="form-control" required="required">
@@ -83,9 +85,11 @@
                                 <td><c:out value="${gamer.name}"/></td>
                                 <td><c:out value="${gamer.mmr}"/></td>
                                 <td><c:out value="${-gamer.serverHandicap(server)}"/></td>
-                                <td><input type="number" name="team2elims" class="form-control" placeholder="Elims count"
+                                <td><input type="number" name="team2elims" class="form-control"
+                                           placeholder="Elims count"
                                            required="required"/></td>
-                                <td><input type="number" name="team2flags" class="form-control" placeholder="Flags count" min="0" max="6"
+                                <td><input type="number" name="team2flags" class="form-control"
+                                           placeholder="Flags count" min="0" max="6"
                                            required="required"/></td>
                                 <td>
                                     <select name="team2titans" class="form-control" required="required">
@@ -137,16 +141,17 @@
                             <th>Sudden Death</th>
                             <th>Team 1 Win</th>
                             <th>Team 2 Win</th>
-                            <th>Server</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
                             <td><form:checkbox id="suddenDeath" path="suddenDeath"/> Sudden Death</td>
-                            <td><form:radiobutton path="suddenDeathWhoWon" id="team1WinRadio" value="team1" disabled="true"/>
+                            <td><form:radiobutton path="suddenDeathWhoWon" id="team1WinRadio" value="team1"
+                                                  disabled="true"/>
                                 Team1 Win
                             </td>
-                            <td><form:radiobutton path="suddenDeathWhoWon" id="team2WinRadio" value="team2" disabled="true"/>
+                            <td><form:radiobutton path="suddenDeathWhoWon" id="team2WinRadio" value="team2"
+                                                  disabled="true"/>
                                 Team2 Win
                             </td>
                             <td><form:input type="hidden" path="server" class="form-control" value="${server}"/></td>
@@ -159,11 +164,14 @@
                 <button type="button" class="btn btn-primary" onclick="getRandomData()">SetRandomMatchResult</button>
             </form:form>
         </div>
+        <div class="col-lg-4">
+            <div id="imageDropArea" onpaste="paste(event)" class="mt-4">
+                You can paste image with scores here for easier reading
+            </div>
+            <img id="previewImage" src="#" alt="Preview" style="display: none; padding-top: 10px;">
+        </div>
     </div>
 </div>
-<div id="imageDropArea" onpaste="paste(event)" class="mt-4">
-    You can paste image with scores here for easier reading
-</div>
-<img id="previewImage" src="#" alt="Preview" style="display: none; padding-top: 10px;">
+
 </body>
 </html>

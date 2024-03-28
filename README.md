@@ -28,12 +28,10 @@ The system continuously monitors player statistics, allowing users to explore va
 
 * **Worst Nemesis:** Frequency of wins and losses when facing off against particular players.
 
-## Contributors
-We welcome contributions from the community to enhance and improve the system. 
+## More information
+For more explanation you can watch video below
 
-Feel free to open issues for bug reports or feature requests.
-
-Let's create a more balanced and competitive gaming experience in Titanfall 2!
+https://www.youtube.com/watch?v=UoY1Vs-6aJ4
 
 ## How to run
 

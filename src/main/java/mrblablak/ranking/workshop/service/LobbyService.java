@@ -32,7 +32,7 @@ public class LobbyService {
         boolean teamsReady = gamersDTO.isTeamsReady();
         Gamer[] gamers = getGamersWithHandicap(gamersDTO);
 
-        if (teamsReady) {
+        if (teamsReady == true) {
             prepareTeamsFromGamers(gamers);
             checkAndPrintTeams(server);
         } else {
@@ -65,7 +65,9 @@ public class LobbyService {
     }
     private void prepareTeamsFromGamers(Gamer[] gamers) {
         for (int i = 0; i < TEAM_SIZE; i++) {
+            team1gamers[i] = new Gamer();
             team1gamers[i].cloneValues(gamers[i]);
+            team2gamers[i] = new Gamer();
             team2gamers[i].cloneValues(gamers[i + TEAM_SIZE]);
         }
     }
