@@ -36,6 +36,10 @@ https://www.youtube.com/watch?v=UoY1Vs-6aJ4
 ## How to run
 
 ### Docker
+#### Configure Persistence Settings:
+Open the persistence.xml file located in the src/main/resources/META-INF directory of your project.
+Verify that the javax.persistence.jdbc.user and javax.persistence.jdbc.password properties match your MySQL configuration.
+
 Build war and docker image  
 `mvn clean package && docker build -t mrblablak-ranking .`
 
