@@ -1,7 +1,5 @@
 package mrblablak.ranking.workshop.model;
 
-import org.springframework.context.annotation.Bean;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 

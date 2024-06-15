@@ -32,7 +32,7 @@ public class LobbyService {
         boolean teamsReady = gamersDTO.isTeamsReady();
         Gamer[] gamers = getGamersWithHandicap(gamersDTO);
 
-        if (teamsReady == true) {
+        if (teamsReady) {
             prepareTeamsFromGamers(gamers);
             checkAndPrintTeams(server);
         } else {
@@ -135,21 +135,18 @@ public class LobbyService {
     }
 
     private void checkAndPrintTeams(String server) {
-        checkTeam1(team1gamers, server);
-        checkTeam2(team2gamers, server);
+        checkTeam(team1gamers, server, 1);
+        checkTeam(team2gamers, server, 2);
     }
-    public void checkTeam1(Gamer[] team1, String server) {
+    public void checkTeam(Gamer[] team1, String server, int number) {
         for (Gamer a : team1) {
-            System.out.println(a.getName() + " - " + a.getMmr() + " - " + " - handicap -" + a.serverHandicap(server));
+            if (a != null) {
+                System.out.println(a.getName() + " - " + a.getMmr() + " - " + " - handicap -" + a.serverHandicap(server));
+            } else {
+                System.out.println("Encountered a null Gamer object in the team.");
+            }
         }
-        System.out.println("team1 checked \n");
-    }
-
-    public void checkTeam2(Gamer[] team2, String server) {
-        for (Gamer a : team2) {
-            System.out.println(a.getName() + " - " + a.getMmr() + " - " + " - handicap -" + a.serverHandicap(server));
-        }
-        System.out.println("team2 checked \n");
+        System.out.format("team%d checked \n",number);
     }
 
     public double checkPerfectBalance(Gamer[] lobby) {

@@ -2,10 +2,13 @@ package mrblablak.ranking.workshop.controller;
 import lombok.RequiredArgsConstructor;
 import mrblablak.ranking.workshop.dtoForForms.GamersDTO;
 import mrblablak.ranking.workshop.dtoForForms.GamersMatchStatsDTO;
+import mrblablak.ranking.workshop.model.Gamer;
 import mrblablak.ranking.workshop.service.LobbyService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -16,8 +19,9 @@ public class LobbyController {
     //start, get data and send it to view
     @GetMapping("/pickTeams")
     public String pickTeams(Model model) {
-        model.addAttribute("gamers", lobbyService.getAllGamers());
-        model.addAttribute("servers", lobbyService.getAllGamers().get(0).getAllServers());
+        List <Gamer> gamers = lobbyService.getAllGamers();
+        model.addAttribute("gamers", gamers);
+        model.addAttribute("servers", gamers.get(0).getAllServers());
         model.addAttribute("gamersDTO", new GamersDTO());
         return "gamer/pickTeams";
     }
