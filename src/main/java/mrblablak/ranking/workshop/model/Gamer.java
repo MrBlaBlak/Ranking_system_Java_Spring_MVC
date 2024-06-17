@@ -52,6 +52,7 @@ public class Gamer {
         this.setName(another.getName());
         this.setServer(another.getServer());
         this.setId(another.getId());
+        this.setLastTen(another.getLastTen());
     }
     public String[] getAllServers(){
         return new String[]{"EU", "NY"};
@@ -141,7 +142,12 @@ public class Gamer {
 
     @Override
     public String toString() {
-        return
-                name + " " + mmr;
+        return "Gamer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", mmr=" + mmr +
+                ", server='" + server + '\'' +
+                ", lastTen='" + lastTen + '\'' +
+                '}';
     }
 }

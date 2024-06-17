@@ -3,7 +3,7 @@ import lombok.RequiredArgsConstructor;
 import mrblablak.ranking.workshop.dtoForForms.GamersDTO;
 import mrblablak.ranking.workshop.dtoForForms.GamersMatchStatsDTO;
 import mrblablak.ranking.workshop.model.Gamer;
-import mrblablak.ranking.workshop.service.LobbyService;
+import mrblablak.ranking.workshop.service.lobby.impl.LobbyService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +44,7 @@ public class LobbyController {
     //update scores of players
     @PostMapping("/updateScores")
     public String updateScores(GamersMatchStatsDTO gamersMatchStatsDTO, Model model) {
-        boolean isValidated = lobbyService.calculateMmr(gamersMatchStatsDTO);
+        boolean isValidated = lobbyService.calculateMmrAndUpdatePlayers(gamersMatchStatsDTO);
         if(isValidated) {
             model.addAttribute("team1", lobbyService.getTeam1());
             model.addAttribute("team2", lobbyService.getTeam2());

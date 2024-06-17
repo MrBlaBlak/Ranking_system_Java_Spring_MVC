@@ -1,7 +1,7 @@
 package mrblablak.ranking.workshop.controller;
 
 import lombok.RequiredArgsConstructor;
-import mrblablak.ranking.workshop.service.StatsService;
+import mrblablak.ranking.workshop.service.stats.StatsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;

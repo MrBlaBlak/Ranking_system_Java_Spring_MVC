@@ -1,4 +1,4 @@
-package mrblablak.ranking.workshop.service;
+package mrblablak.ranking.workshop.service.stats;
 
 import lombok.RequiredArgsConstructor;
 import mrblablak.ranking.workshop.dtoForRepository.*;
