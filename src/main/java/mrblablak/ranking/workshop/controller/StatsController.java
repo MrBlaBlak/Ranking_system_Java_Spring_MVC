@@ -1,7 +1,7 @@
 package mrblablak.ranking.workshop.controller;
 
 import lombok.RequiredArgsConstructor;
-import mrblablak.ranking.workshop.service.stats.StatsService;
+import mrblablak.ranking.workshop.service.stats.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,55 +14,60 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class StatsController {
 
-    private final StatsService statsService;
+    private final GamerStatsService gamerStatsService;
+    private final MapStatsService mapStatsService;
+    private final TitanStatsService titanStatsService;
+    private final KillsStatsService killsStatsService;
+    private final CapsStatsService capsStatsService;
+    private final WingmanNemesisStatsService wingmanNemesisStatsService;
 
     //add players from data file
     @RequestMapping("/")
     public String readTextFile() throws IOException {
-        statsService.addDataIfEmpty();
+        gamerStatsService.addDataIfEmpty();
         return "redirect:/pickTeams";
     }
 
     @RequestMapping("/stats/general")
     public String statsGeneral(Model model) {
-        model.addAttribute("gamers", statsService.getAllGamers());
-        model.addAttribute("gamerTitans", statsService.getMostFrequentTitanForGamer());
+        model.addAttribute("gamers", gamerStatsService.getAllGamers());
+        model.addAttribute("gamerTitans", titanStatsService.getMostFrequentTitanForGamer());
         return "gamer/statsGeneral";
     }
 
     @RequestMapping("/stats/maps")
     public String statsMaps(Model model) {
-        model.addAttribute("gamerStatsList", statsService.getMapStats());
-        model.addAttribute("mapOrder", statsService.getMapOrder());
+        model.addAttribute("gamerStatsList", mapStatsService.getMapStats());
+        model.addAttribute("mapOrder", TitanAndMapNameUtility.getMapOrder());
         return "gamer/statsMaps";
     }
 
     @RequestMapping("/stats/titans")
     public String statsTitans(Model model) {
-        model.addAttribute("gamerStatsList", statsService.getTitanStats());
-        model.addAttribute("titanOrder", statsService.getTitanOrder());
+        model.addAttribute("gamerStatsList", titanStatsService.getTitanStats());
+        model.addAttribute("titanOrder", TitanAndMapNameUtility.getTitanOrder());
         return "gamer/statsTitans";
     }
 
     @RequestMapping("/stats/kills")
     public String statsKills(Model model) {
-        model.addAttribute("gamerStatsList", statsService.getKillsStats());
-        model.addAttribute("mapOrder", statsService.getMapOrder());
+        model.addAttribute("gamerStatsList", killsStatsService.getKillsStats());
+        model.addAttribute("mapOrder", TitanAndMapNameUtility.getMapOrder());
         return "gamer/statsKills";
     }
 
     @RequestMapping("/stats/caps")
     public String statsCaps(Model model) {
-        model.addAttribute("gamerStatsList", statsService.getCapsStats());
-        model.addAttribute("mapOrder", statsService.getMapOrder());
+        model.addAttribute("gamerStatsList", capsStatsService.getCapsStats());
+        model.addAttribute("mapOrder", TitanAndMapNameUtility.getMapOrder());
         return "gamer/statsCaps";
     }
 
     @GetMapping("/nemesis/{playerId}")
     public String getWingmanAndNemesisStats(@PathVariable int playerId, Model model) {
-        model.addAttribute("nemesisStatsList", statsService.getWingmanAndNemesisStats(playerId, "nemesis"));
-        model.addAttribute("wingmanStatsList", statsService.getWingmanAndNemesisStats(playerId, "wingman"));
-        model.addAttribute("name", statsService.getGamer(playerId).getName());
+        model.addAttribute("nemesisStatsList", wingmanNemesisStatsService.getWingmanAndNemesisStats(playerId, "nemesis"));
+        model.addAttribute("wingmanStatsList", wingmanNemesisStatsService.getWingmanAndNemesisStats(playerId, "wingman"));
+        model.addAttribute("name", gamerStatsService.getGamer(playerId).getName());
         return "gamer/statsNemesis";
     }
 }
