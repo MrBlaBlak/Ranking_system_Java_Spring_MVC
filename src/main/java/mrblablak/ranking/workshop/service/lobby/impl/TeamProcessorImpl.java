@@ -83,8 +83,9 @@ public class TeamProcessorImpl implements TeamProcessor {
         return team2gamers;
     }
 
-
     public static String getServer() {
         return server;
     }
+
 }
+
