@@ -20,6 +20,21 @@ public class GamersMatchStatsDTO {
 
     }
 
+    public GamersMatchStatsDTO(String server, boolean suddenDeath, String suddenDeathWhoWon, String[] team1titans, String[] team2titans, int[] team1gamersId, int[] team1elims, int[] team1flags, int[] team2gamersId, int[] team2elims, int[] team2flags, String mapPlayed) {
+        this.server = server;
+        this.suddenDeath = suddenDeath;
+        this.suddenDeathWhoWon = suddenDeathWhoWon;
+        this.team1titans = team1titans;
+        this.team2titans = team2titans;
+        this.team1gamersId = team1gamersId;
+        this.team1elims = team1elims;
+        this.team1flags = team1flags;
+        this.team2gamersId = team2gamersId;
+        this.team2elims = team2elims;
+        this.team2flags = team2flags;
+        this.mapPlayed = mapPlayed;
+    }
+
     public String getServer() {
         return server;
     }

@@ -26,7 +26,7 @@ class TeamProcessorImplTest {
     @InjectMocks
     private TeamProcessorImpl teamProcessor;
 
-    private GamersDTO mockGamersDTO;
+    private GamersDTO gamersDTO;
     private static final int TEAM_SIZE = 5;
     private static final int LOBBY_SIZE = 10;
     private final Gamer[] team1gamers = new Gamer[TEAM_SIZE];
@@ -35,9 +35,9 @@ class TeamProcessorImplTest {
     @BeforeEach
     void setUp() {
 
-        // Initialize mock GamersDTO
-        mockGamersDTO = new GamersDTO("EU", false);
-        mockGamersDTO.setGamersList(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+
+        gamersDTO = new GamersDTO("EU", false);
+        gamersDTO.setGamersList(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
         // Mock GamerRepository behavior
         when(gamerRepository.findById(ArgumentMatchers.anyInt())).thenReturn(Optional.of(new Gamer("Player", 1000.0, "EU", "1010101010")));
 
@@ -46,10 +46,10 @@ class TeamProcessorImplTest {
     @Test
     void testProcessTeams_teamsAlreadyReady() {
         // Set up the DTO for teams already ready
-        mockGamersDTO.setTeamsReady(true);
+        gamersDTO.setTeamsReady(true);
 
         // Execute the method under test
-        boolean result = teamProcessor.processTeams(mockGamersDTO);
+        boolean result = teamProcessor.processTeams(gamersDTO);
 
         // Verify that teams are prepared correctly (should not call matchmaker)
         assertTrue(result);
