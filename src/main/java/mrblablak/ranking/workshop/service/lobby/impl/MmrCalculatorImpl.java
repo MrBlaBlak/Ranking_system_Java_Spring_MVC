@@ -2,19 +2,15 @@ package mrblablak.ranking.workshop.service.lobby.impl;
 
 import lombok.RequiredArgsConstructor;
 import mrblablak.ranking.workshop.model.*;
-import mrblablak.ranking.workshop.repository.*;
 import mrblablak.ranking.workshop.service.lobby.MmrCalculator;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
 public class MmrCalculatorImpl implements MmrCalculator {
-    private final GamerRepository gamerRepository;
 
     private static final int TEAM_SIZE = 5;
-    private final Gamer[] team1gamers = new Gamer[TEAM_SIZE];
-    private final Gamer[] team2gamers = new Gamer[TEAM_SIZE];
 
     @Override
     public boolean calculateMmr(int whoWon, Gamer[] team1gamers, Gamer[] team2gamers, Team team1, Team team2, boolean suddenDeath) {

@@ -3,11 +3,8 @@ package mrblablak.ranking.workshop.service.lobby.impl;
 import mrblablak.ranking.workshop.model.Gamer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
-
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class MatchmakerImplTest {
