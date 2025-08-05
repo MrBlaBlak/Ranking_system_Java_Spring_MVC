@@ -2,7 +2,10 @@ package com.mrblablak.rankingSystem.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data @NoArgsConstructor
 @Entity
 @Table(name = "teams")
 public class Team {
@@ -16,45 +19,4 @@ public class Team {
     @Column(name = "flag_advantage")
     private int flagAdvantage;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getWinOrLoose() {
-        return winOrLoose;
-    }
-
-    public void setWinOrLoose(int winOrLoose) {
-        this.winOrLoose = winOrLoose;
-    }
-
-    public int getFlagAdvantage() {
-        return flagAdvantage;
-    }
-
-    public void setFlagAdvantage(int flagAdvantage) {
-        this.flagAdvantage = flagAdvantage;
-    }
-
-    public Team() {
-    }
-
-    public Team(int id, int winOrLoose, int flagAdvantage) {
-        this.id = id;
-        this.winOrLoose = winOrLoose;
-        this.flagAdvantage = flagAdvantage;
-    }
-
-    @Override
-    public String toString() {
-        return "Team{" +
-                "id=" + id +
-                ", winOrLoose=" + winOrLoose +
-                ", flagAdvantage=" + flagAdvantage +
-                '}';
-    }
 }

@@ -2,7 +2,11 @@ package com.mrblablak.rankingSystem.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Data @NoArgsConstructor
 @Entity
 @Table(name = "kills_and_caps")
 public class KillsAndCaps {
@@ -17,53 +21,10 @@ public class KillsAndCaps {
     private int kills;
     @NotNull
     private int caps;
+    @NotNull
     private Titan_Name titan;
     public enum Titan_Name{
         ion, tone, ronin, northstar, monarch, legion, scorch, none
     }
 
-    public KillsAndCaps() {
-    }
-
-    public int getKills() {
-        return kills;
-    }
-
-    public void setKills(int kills) {
-        this.kills = kills;
-    }
-
-    public int getCaps() {
-        return caps;
-    }
-
-    public void setCaps(int caps) {
-        this.caps = caps;
-    }
-    public Titan_Name getTitan() {
-        return titan;
-    }
-
-    public void setTitan(Titan_Name titan) {
-        this.titan = titan;
-    }
-
-    public MatchGamer getMatchGamer() {
-        return matchGamer;
-    }
-
-    public void setMatchGamer(MatchGamer matchGamer) {
-        this.matchGamer = matchGamer;
-    }
-
-    @Override
-    public String toString() {
-        return "KillsAndCaps{" +
-                "id=" + id +
-                ", matchGamer=" + matchGamer +
-                ", kills=" + kills +
-                ", caps=" + caps +
-                ", titan=" + titan +
-                '}';
-    }
 }

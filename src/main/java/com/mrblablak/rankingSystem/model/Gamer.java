@@ -15,6 +15,7 @@ public class Gamer {
     @NotNull
     private int id;
     @NotNull
+    @Column(name = "last_ten")
     private String lastTen;
     @NotNull
     private double mmr;
