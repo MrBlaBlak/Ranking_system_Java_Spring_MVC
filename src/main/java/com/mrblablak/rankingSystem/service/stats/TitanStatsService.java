@@ -27,7 +27,7 @@ public class TitanStatsService {
             Integer titanLosses = ((BigDecimal) result[2]).intValue();
             String titan = "";
             if (result[3] != null) {
-                titan = TitanAndMapNameUtility.getTitanName((int) result[3]);
+                titan = (String) result[3];
             }
             Integer titanWinPercent = Long.valueOf(Math.round(titanWins * 1.0 / (titanWins + titanLosses) * 100)).intValue();
 
@@ -59,7 +59,7 @@ public class TitanStatsService {
 
         for (Object[] result : gamerTitans) {
             int gamerId = (int) result[0];
-            String titan = TitanAndMapNameUtility.getTitanName((int) result[1]);
+            String titan = (String) result[1];
             gamerTitanMap.put(gamerId, titan);
             System.out.println(gamerTitanMap.get(gamerId));
         }

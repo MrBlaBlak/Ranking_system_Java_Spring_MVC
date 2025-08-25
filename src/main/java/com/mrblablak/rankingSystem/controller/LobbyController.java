@@ -49,7 +49,7 @@ public class LobbyController {
         if(isValidated) {
             model.addAttribute("team1", lobbyService.getTeam1());
             model.addAttribute("team2", lobbyService.getTeam2());
-            model.addAttribute("server", gamersMatchStatsDTO.getServer());
+            model.addAttribute("server", gamersMatchStatsDTO.server());
 
             return "gamer/teamsScores";
         }

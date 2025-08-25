@@ -14,6 +14,7 @@ public class Match {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Enumerated(EnumType.STRING)
     @NotNull
     private Map_Name map;
     @NotNull

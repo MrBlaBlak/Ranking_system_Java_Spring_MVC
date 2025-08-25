@@ -6,7 +6,6 @@ import com.mrblablak.rankingSystem.repository.GamerRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +21,8 @@ public class KillsStatsService {
 
         for (Object[] result : resultsKills) {
             String gamerName = (String) result[0];
-            Integer mapKills = 0;
-            Integer mapTotalGames = 0;
+            int mapKills = 0;
+            int mapTotalGames = 0;
             Integer mapBestKills = 0;
             String map = "";
             if (result[1] != null) {
@@ -36,7 +35,7 @@ public class KillsStatsService {
                 mapBestKills = (Integer) result[3];
             }
             if (result[4] != null) {
-                map = TitanAndMapNameUtility.getMapName((int) result[4]);
+                map = (String) result[4];
             }
 
             Double mapAverageKills = (Math.round(mapKills * 1.0 / (mapTotalGames) * 100)) / 100.0;

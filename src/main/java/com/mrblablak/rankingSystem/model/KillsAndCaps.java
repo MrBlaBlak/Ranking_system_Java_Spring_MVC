@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Data @NoArgsConstructor
 @Entity
@@ -21,6 +20,7 @@ public class KillsAndCaps {
     private int kills;
     @NotNull
     private int caps;
+    @Enumerated(EnumType.STRING)
     @NotNull
     private Titan_Name titan;
     public enum Titan_Name{

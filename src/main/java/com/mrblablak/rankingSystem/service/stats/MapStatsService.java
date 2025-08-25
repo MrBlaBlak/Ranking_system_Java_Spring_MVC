@@ -24,7 +24,7 @@ public class MapStatsService  {
             Integer mapLosses = ((BigDecimal) result[2]).intValue();
             String map = "";
             if (result[3] != null) {
-                map = TitanAndMapNameUtility.getMapName((int) result[3]);
+                map = (String) result[3];
             }
             Integer mapWinPercent = Long.valueOf(Math.round(mapWins * 1.0 / (mapWins + mapLosses) * 100)).intValue();
 

@@ -24,8 +24,8 @@ public class TeamProcessorImpl implements TeamProcessor {
 
     @Override
     public boolean processTeams(GamersDTO gamersDTO) {
-        server = gamersDTO.getServer();
-        boolean teamsReady = gamersDTO.isTeamsReady();
+        server = gamersDTO.server();
+        boolean teamsReady = gamersDTO.teamsReady();
         Gamer[] gamers = getGamersWithHandicap(gamersDTO);
         if (teamsReady) {
             prepareTeamsFromGamers(gamers);
@@ -40,7 +40,7 @@ public class TeamProcessorImpl implements TeamProcessor {
     private Gamer[] getGamersWithHandicap(GamersDTO gamersDTO) {
         Gamer[] gamers = new Gamer[LOBBY_SIZE];
         for (int i = 0; i < LOBBY_SIZE; i++) {
-            Optional<Gamer> optionalGamer = gamerRepository.findById(gamersDTO.getGamersList()[i]);
+            Optional<Gamer> optionalGamer = gamerRepository.findById(gamersDTO.gamersList()[i]);
             if (optionalGamer.isPresent()) {
                 gamers[i] = optionalGamer.get();
                 gamers[i].setMmr(gamers[i].getMmr() - ServerUtils.calculateHandicap(gamers[i].getServer(), server));

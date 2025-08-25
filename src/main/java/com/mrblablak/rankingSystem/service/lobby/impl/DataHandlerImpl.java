@@ -29,18 +29,18 @@ public class DataHandlerImpl implements DataHandler {
 
     @Override
     public boolean setData(GamersMatchStatsDTO gamersMatchStatsDTO, Gamer[] team1gamers, Gamer[] team2gamers) {
-        server = gamersMatchStatsDTO.getServer();
-        boolean suddenDeath = gamersMatchStatsDTO.isSuddenDeath();
-        String suddenDeathWhoWon = gamersMatchStatsDTO.getSuddenDeathWhoWon();
-        String[] sTeam1titans = gamersMatchStatsDTO.getTeam1titans();
-        String[] sTeam2titans = gamersMatchStatsDTO.getTeam2titans();
-        int[] team1gamersId = gamersMatchStatsDTO.getTeam1gamersId();
-        int[] team1elims = gamersMatchStatsDTO.getTeam1elims();
-        int[] team1flags = gamersMatchStatsDTO.getTeam1flags();
-        int[] team2gamersId = gamersMatchStatsDTO.getTeam2gamersId();
-        int[] team2elims = gamersMatchStatsDTO.getTeam2elims();
-        int[] team2flags = gamersMatchStatsDTO.getTeam2flags();
-        String mapPlayed = gamersMatchStatsDTO.getMapPlayed();
+        server = gamersMatchStatsDTO.server();
+        boolean suddenDeath = gamersMatchStatsDTO.suddenDeath();
+        String suddenDeathWhoWon = gamersMatchStatsDTO.suddenDeathWhoWon();
+        String[] sTeam1titans = gamersMatchStatsDTO.team1titans();
+        String[] sTeam2titans = gamersMatchStatsDTO.team2titans();
+        int[] team1gamersId = gamersMatchStatsDTO.team1gamersId();
+        int[] team1elims = gamersMatchStatsDTO.team1elims();
+        int[] team1flags = gamersMatchStatsDTO.team1flags();
+        int[] team2gamersId = gamersMatchStatsDTO.team2gamersId();
+        int[] team2elims = gamersMatchStatsDTO.team2elims();
+        int[] team2flags = gamersMatchStatsDTO.team2flags();
+        String mapPlayed = gamersMatchStatsDTO.mapPlayed();
 
         Match match = new Match();
         Team team1 = new Team();
