@@ -36,7 +36,7 @@ public class KillsStatsService {
                 mapBestKills = (Integer) result[3];
             }
             if (result[4] != null) {
-                map = TitanAndMapNameUtility.getMapName((int) result[4]);
+                map = (String) result[4];
             }
 
             Double mapAverageKills = (Math.round(mapKills * 1.0 / (mapTotalGames) * 100)) / 100.0;

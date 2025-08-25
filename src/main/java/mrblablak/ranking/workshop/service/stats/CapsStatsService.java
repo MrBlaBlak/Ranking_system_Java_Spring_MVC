@@ -35,7 +35,7 @@ public class CapsStatsService {
                 mapBestCap = (Integer) result[3];
             }
             if (result[4] != null) {
-                map = TitanAndMapNameUtility.getMapName((int) result[4]);
+                map = (String) result[4];
             }
 
             Double mapAverageCaps = (Math.round(mapCaps * 1.0 / (mapTotalGames) * 100)) / 100.0;

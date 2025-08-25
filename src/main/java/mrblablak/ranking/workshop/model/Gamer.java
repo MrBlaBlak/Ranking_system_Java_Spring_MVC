@@ -1,8 +1,13 @@
 package mrblablak.ranking.workshop.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "gamers")
 public class Gamer {
@@ -17,6 +22,7 @@ public class Gamer {
     private double mmr;
     @NotNull
     private String server;
+    @Column(name = "last_ten")
     @NotNull
     private String lastTen;
 
@@ -26,25 +32,7 @@ public class Gamer {
         this.server = server;
         this.lastTen = lastTen;
     }
-    public Gamer(){
 
-    }
-
-    public String getLastTen() {
-        return lastTen;
-    }
-
-    public void setLastTen(String lastTen) {
-        this.lastTen = lastTen;
-    }
-
-    public String getServer() {
-        return server;
-    }
-
-    public void setServer(String server) {
-        this.server = server;
-    }
 
     public void cloneValues(Gamer another) {
 
@@ -114,40 +102,5 @@ public class Gamer {
 
         }
         return handicap;
-    }
-
-    public double getMmr() {
-        return mmr;
-    }
-
-    public void setMmr(double mmr) {
-        this.mmr = mmr;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String username) {
-        this.name = username;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "Gamer{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", mmr=" + mmr +
-                ", server='" + server + '\'' +
-                ", lastTen='" + lastTen + '\'' +
-                '}';
     }
 }
