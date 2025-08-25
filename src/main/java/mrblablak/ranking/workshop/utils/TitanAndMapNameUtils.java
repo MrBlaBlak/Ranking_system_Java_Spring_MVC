@@ -1,6 +1,6 @@
-package mrblablak.ranking.workshop.service.stats;
+package mrblablak.ranking.workshop.utils;
 
-public class TitanAndMapNameUtility {
+public class TitanAndMapNameUtils {
 
         public static String getTitanName(int titanId) {
             switch (titanId) {

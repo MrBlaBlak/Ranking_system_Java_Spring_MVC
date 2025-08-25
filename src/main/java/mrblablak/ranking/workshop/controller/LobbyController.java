@@ -4,6 +4,7 @@ import mrblablak.ranking.workshop.dtoForForms.GamersDTO;
 import mrblablak.ranking.workshop.dtoForForms.GamersMatchStatsDTO;
 import mrblablak.ranking.workshop.model.Gamer;
 import mrblablak.ranking.workshop.service.lobby.impl.LobbyService;
+import mrblablak.ranking.workshop.utils.ServerUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class LobbyController {
     public String pickTeams(Model model) {
         List <Gamer> gamers = lobbyService.getAllGamers();
         model.addAttribute("gamers", gamers);
-        model.addAttribute("servers", gamers.get(0).getAllServers());
+        model.addAttribute("servers", ServerUtils.getAllServers());
         model.addAttribute("gamersDTO", new GamersDTO());
         return "gamer/pickTeams";
     }

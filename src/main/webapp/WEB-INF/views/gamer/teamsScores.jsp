@@ -8,6 +8,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="su" uri="http://example.com/serverUtils" %>
 <html>
 <head>
     <title>Title</title>
@@ -42,7 +43,7 @@
                             <tr>
                                 <td><c:out value="${gamer.name}"/></td>
                                 <td><c:out value="${gamer.mmr}"/></td>
-                                <td><c:out value="${-gamer.serverHandicap(server)}"/></td>
+                                <td><c:out value="${-su:serverHandicap(gamer.server, server)}"/></td>
                                 <td><input type="number" name="team1elims" class="form-control"
                                            placeholder="Elims count"
                                            required="required"/></td>
@@ -84,7 +85,7 @@
                             <tr>
                                 <td><c:out value="${gamer.name}"/></td>
                                 <td><c:out value="${gamer.mmr}"/></td>
-                                <td><c:out value="${-gamer.serverHandicap(server)}"/></td>
+                                <td><c:out value="${-su:serverHandicap(gamer.server, server)}"/></td>
                                 <td><input type="number" name="team2elims" class="form-control"
                                            placeholder="Elims count"
                                            required="required"/></td>

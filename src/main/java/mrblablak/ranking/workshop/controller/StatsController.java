@@ -2,6 +2,7 @@ package mrblablak.ranking.workshop.controller;
 
 import lombok.RequiredArgsConstructor;
 import mrblablak.ranking.workshop.service.stats.*;
+import mrblablak.ranking.workshop.utils.TitanAndMapNameUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,28 +39,28 @@ public class StatsController {
     @RequestMapping("/stats/maps")
     public String statsMaps(Model model) {
         model.addAttribute("gamerStatsList", mapStatsService.getMapStats());
-        model.addAttribute("mapOrder", TitanAndMapNameUtility.getMapOrder());
+        model.addAttribute("mapOrder", TitanAndMapNameUtils.getMapOrder());
         return "gamer/statsMaps";
     }
 
     @RequestMapping("/stats/titans")
     public String statsTitans(Model model) {
         model.addAttribute("gamerStatsList", titanStatsService.getTitanStats());
-        model.addAttribute("titanOrder", TitanAndMapNameUtility.getTitanOrder());
+        model.addAttribute("titanOrder", TitanAndMapNameUtils.getTitanOrder());
         return "gamer/statsTitans";
     }
 
     @RequestMapping("/stats/kills")
     public String statsKills(Model model) {
         model.addAttribute("gamerStatsList", killsStatsService.getKillsStats());
-        model.addAttribute("mapOrder", TitanAndMapNameUtility.getMapOrder());
+        model.addAttribute("mapOrder", TitanAndMapNameUtils.getMapOrder());
         return "gamer/statsKills";
     }
 
     @RequestMapping("/stats/caps")
     public String statsCaps(Model model) {
         model.addAttribute("gamerStatsList", capsStatsService.getCapsStats());
-        model.addAttribute("mapOrder", TitanAndMapNameUtility.getMapOrder());
+        model.addAttribute("mapOrder", TitanAndMapNameUtils.getMapOrder());
         return "gamer/statsCaps";
     }
 

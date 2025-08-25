@@ -6,6 +6,7 @@ import mrblablak.ranking.workshop.model.Gamer;
 import mrblablak.ranking.workshop.repository.GamerRepository;
 import mrblablak.ranking.workshop.service.lobby.Matchmaker;
 import mrblablak.ranking.workshop.service.lobby.TeamProcessor;
+import mrblablak.ranking.workshop.utils.ServerUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -42,7 +43,7 @@ public class TeamProcessorImpl implements TeamProcessor {
             Optional<Gamer> optionalGamer = gamerRepository.findById(gamersDTO.getGamersList()[i]);
             if (optionalGamer.isPresent()) {
                 gamers[i] = optionalGamer.get();
-                gamers[i].setMmr(gamers[i].getMmr() - gamers[i].serverHandicap(server));
+                gamers[i].setMmr(gamers[i].getMmr() - ServerUtils.serverHandicap(gamers[i].getServer(),server));
             } else {
                 return new Gamer[0];
             }
@@ -67,7 +68,7 @@ public class TeamProcessorImpl implements TeamProcessor {
     private void checkTeam(Gamer[] team, String server, int number) {
         for (Gamer a : team) {
             if (a != null) {
-                System.out.println(a.getName() + " - " + a.getMmr() + " - " + " - handicap -" + a.serverHandicap(server));
+                System.out.println(a.getName() + " - " + a.getMmr() + " - " + " - handicap -" + ServerUtils.serverHandicap(a.getServer(),server));
             } else {
                 System.out.println("Encountered a null Gamer object in the team.");
             }

@@ -6,6 +6,7 @@ import mrblablak.ranking.workshop.model.*;
 import mrblablak.ranking.workshop.repository.*;
 import mrblablak.ranking.workshop.service.lobby.DataHandler;
 import mrblablak.ranking.workshop.service.lobby.MmrCalculator;
+import mrblablak.ranking.workshop.utils.ServerUtils;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,8 +155,8 @@ public class DataHandlerImpl implements DataHandler {
     }
     private void setHandicap(Gamer[] team1gamers, Gamer[] team2gamers){
         for (int i = 0; i < TEAM_SIZE; i++) {
-            team1gamers[i].setMmr(team1gamers[i].getMmr() - team1gamers[i].serverHandicap(server));
-            team2gamers[i].setMmr(team2gamers[i].getMmr() - team2gamers[i].serverHandicap(server));
+            team1gamers[i].setMmr(team1gamers[i].getMmr() - ServerUtils.serverHandicap(team1gamers[i].getServer(),server));
+            team2gamers[i].setMmr(team2gamers[i].getMmr() - ServerUtils.serverHandicap(team2gamers[i].getServer(),server));
         }
     }
     private void setMatchGamers(MatchGamer[] matchGamers, Match match, Team team1, Team team2, Gamer[] team1gamers, Gamer[] team2gamers) {
