@@ -10,14 +10,15 @@ import java.util.List;
 @Repository
 public interface GamerRepository extends JpaRepository<Gamer, Integer> {
 
-//find most frequently used titan for every gamer
+
     List<Gamer> findAllByOrderByMmrDesc();
+    //find most frequently used titan for every gamer
     @Query(value = "SELECT t.gamer_id, MAX(t.max_titan) AS max_titan " +
             "FROM (SELECT mg.gamer_id, k.titan AS max_titan, " +
             "             ROW_NUMBER() OVER (PARTITION BY mg.gamer_id ORDER BY COUNT(k.titan) DESC) AS row_num " +
             "      FROM match_gamer mg " +
             "      JOIN kills_and_caps k ON mg.id = k.match_gamer_id " +
-            "      WHERE k.titan != 7 " +
+            "      WHERE k.titan != 8 " +
             "      GROUP BY mg.gamer_id, k.titan) AS t " +
             "WHERE t.row_num = 1 " +
             "GROUP BY t.gamer_id",

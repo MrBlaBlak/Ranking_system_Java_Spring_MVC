@@ -31,19 +31,19 @@ public class TitanStatsService {
             }
             Integer titanWinPercent = Long.valueOf(Math.round(titanWins * 1.0 / (titanWins + titanLosses) * 100)).intValue();
 
-            // czy gracz na liście
+            // is gamer on the list
             TitanStatsDTO existingGamerStats = gamerStatsList.stream()
                     .filter(gamerStats -> gamerStats.getGamerName().equals(gamerName))
                     .findFirst()
                     .orElse(null);
 
             if (existingGamerStats != null) {
-                // jeżeli tak to dodaj do mapy
+                // if yes add to map
                 existingGamerStats.getTitanWins().put(titan, titanWins);
                 existingGamerStats.getTitanLosses().put(titan, titanLosses);
                 existingGamerStats.getTitanWinPercent().put(titan, titanWinPercent);
             } else {
-                // jeżeli nie to nowy gracz
+                // otherwise new gamer
                 TitanStatsDTO newGamerStats = new TitanStatsDTO(gamerName);
                 newGamerStats.getTitanWins().put(titan, titanWins);
                 newGamerStats.getTitanLosses().put(titan, titanLosses);
@@ -61,7 +61,6 @@ public class TitanStatsService {
             int gamerId = (int) result[0];
             String titan = (String) result[1];
             gamerTitanMap.put(gamerId, titan);
-            System.out.println(gamerTitanMap.get(gamerId));
         }
         return gamerTitanMap;
     }
