@@ -1,11 +1,10 @@
 package com.mrblablak.rankingSystem.service.stats;
 
+import com.mrblablak.rankingSystem.utils.StatsUtils;
 import lombok.RequiredArgsConstructor;
 import com.mrblablak.rankingSystem.dtoForRepository.WingmanNemesisStatsDTO;
 import com.mrblablak.rankingSystem.repository.GamerRepository;
 import org.springframework.stereotype.Service;
-
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,15 +23,11 @@ public class WingmanNemesisStatsService {
         for (Object[] stats : statsList) {
             WingmanNemesisStatsDTO statsDTO = new WingmanNemesisStatsDTO();
             statsDTO.setName((String) stats[0]);
-            statsDTO.setWins(((Long) stats[1]).intValue());
-            statsDTO.setLosses(((Long) stats[2]).intValue());
-            statsDTO.setWinPercentage(calculateWinPercentage(statsDTO.getWins(), statsDTO.getLosses()));
+            statsDTO.setWins(StatsUtils.toInt(stats[1]));
+            statsDTO.setLosses(StatsUtils.toInt(stats[2]));
+            statsDTO.setWinPercentage(StatsUtils.calcWinPercent(statsDTO.getWins(), statsDTO.getLosses()));
             statsDTOList.add(statsDTO);
         }
         return statsDTOList;
-    }
-
-    private int calculateWinPercentage(int wins, int losses) {
-        return (int) Math.round(wins * 100.0 / (wins + losses));
     }
 }

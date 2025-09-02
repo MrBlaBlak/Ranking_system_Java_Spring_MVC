@@ -1,5 +1,6 @@
 package com.mrblablak.rankingSystem.controller;
 
+import com.mrblablak.rankingSystem.utils.TitanAndMapNameUtility;
 import lombok.RequiredArgsConstructor;
 import com.mrblablak.rankingSystem.service.stats.*;
 import org.springframework.stereotype.Controller;
