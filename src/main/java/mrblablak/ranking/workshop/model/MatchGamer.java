@@ -23,4 +23,9 @@ public class MatchGamer {
     @JoinColumn(name = "team_id")
     private Team team;
 
+    public MatchGamer(Gamer gamer, Match match, Team team) {
+        this.gamer = gamer;
+        this.match = match;
+        this.team = team;
+    }
 }

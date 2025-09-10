@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: mrbla
-  Date: 10.10.2023
-  Time: 19:48
-  To change this template use File | Settings | File Templates.
---%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -46,11 +39,10 @@
 <body>
 <div class="container">
     <h2 class="text-center mb-4">Player List</h2>
-    <!-- Tabela z graczami -->
     <table class="table table-striped">
         <thead class="thead-dark">
         <tr>
-            <th>Badge</th>
+            <th><button onClick="javascript:location.href='../pickTeams'" class="btn btn-secondary return-button">Return</button></th>
             <th>Name</th>
             <th>MMR</th>
             <th>Server</th>
@@ -64,22 +56,22 @@
             <tr>
                 <td>
                     <c:choose>
-                        <c:when test="${gamer.mmr > 620.1}">
+                        <c:when test="${gamer.mmr >= 620.1}">
                             <img src="../resources/images/badges/Apex_Predator_Badge.png" alt="Apex Predator" title="Predator" class="badge-image">
                         </c:when>
-                        <c:when test="${gamer.mmr > 610.1 && gamer.mmr < 620.1}">
+                        <c:when test="${gamer.mmr >= 610.1 && gamer.mmr < 620.1}">
                             <img src="../resources/images/badges/Masters_Badge.png" alt="Masters" title="Masters" class="badge-image">
                         </c:when>
-                        <c:when test="${gamer.mmr > 600.1 && gamer.mmr < 610.1}">
+                        <c:when test="${gamer.mmr >= 600.1 && gamer.mmr < 610.1}">
                             <img src="../resources/images/badges/Diamond_Badge.png" alt="Diamond" title="Diamond" class="badge-image">
                         </c:when>
-                        <c:when test="${gamer.mmr > 590.1 && gamer.mmr < 600.1}">
+                        <c:when test="${gamer.mmr >= 590.1 && gamer.mmr < 600.1}">
                             <img src="../resources/images/badges/Platinum_Badge.png" alt="Platinum" title="Platinum" class="badge-image">
                         </c:when>
-                        <c:when test="${gamer.mmr > 580.1 && gamer.mmr < 590.1}">
+                        <c:when test="${gamer.mmr >= 580.1 && gamer.mmr < 590.1}">
                             <img src="../resources/images/badges/Gold_Badge.png" alt="Gold" title="Gold" class="badge-image">
                         </c:when>
-                        <c:when test="${gamer.mmr > 570.1 && gamer.mmr < 580.1}">
+                        <c:when test="${gamer.mmr >= 570.1 && gamer.mmr < 580.1}">
                             <img src="../resources/images/badges/Silver_Badge.png" alt="Silver" title="Silver" class="badge-image">
                         </c:when>
                         <c:otherwise>
@@ -107,8 +99,6 @@
         </c:forEach>
         </tbody>
     </table>
-    <!-- Przycisk powrotu -->
-    <button onClick="javascript:location.href='../pickTeams'" class="btn btn-secondary return-button">Return</button>
 </div>
 </body>
 </html>

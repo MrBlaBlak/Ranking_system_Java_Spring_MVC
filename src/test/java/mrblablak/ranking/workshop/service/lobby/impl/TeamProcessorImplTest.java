@@ -31,8 +31,7 @@ class TeamProcessorImplTest {
 
     @BeforeEach
     void setUp() {
-        gamersDTO = new GamersDTO("EU", false);
-        gamersDTO.setGamersList(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+        gamersDTO = new GamersDTO(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10},"EU", false);
         // Mock GamerRepository behavior
         when(gamerRepository.findById(ArgumentMatchers.anyInt())).thenReturn(Optional.of(new Gamer("Player", 1000.0, "EU", "1010101010")));
     }

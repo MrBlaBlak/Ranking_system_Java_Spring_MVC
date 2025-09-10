@@ -24,6 +24,14 @@ public class KillsAndCaps {
     private int caps;
     @Enumerated(EnumType.STRING)
     private Titan_Name titan;
+
+    public KillsAndCaps(int kills, int caps, Titan_Name titan, MatchGamer matchGamer) {
+        this.kills = kills;
+        this.caps = caps;
+        this.titan = titan;
+        this.matchGamer = matchGamer;
+    }
+
     public enum Titan_Name{
         ion, tone, ronin, northstar, monarch, legion, scorch, none
     }
