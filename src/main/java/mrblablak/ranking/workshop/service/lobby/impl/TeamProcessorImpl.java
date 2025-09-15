@@ -25,9 +25,9 @@ public class TeamProcessorImpl implements TeamProcessor {
     @Override
     public boolean processTeams(GamersDTO gamersDTO) {
         server = gamersDTO.getServer();
-        boolean teamsReady = gamersDTO.isTeamsReady();
+
         Gamer[] gamers = getGamersWithHandicap(gamersDTO);
-        if (teamsReady) {
+        if (gamersDTO.isTeamsReady()) {
             prepareTeamsFromGamers(gamers);
             checkAndPrintTeams(server);
         } else {

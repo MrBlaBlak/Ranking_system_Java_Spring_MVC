@@ -6,36 +6,30 @@ import mrblablak.ranking.workshop.model.*;
 import mrblablak.ranking.workshop.repository.*;
 import mrblablak.ranking.workshop.service.lobby.DataHandler;
 import mrblablak.ranking.workshop.service.lobby.MmrCalculator;
+import mrblablak.ranking.workshop.service.persistence.PersistenceService;
 import mrblablak.ranking.workshop.utils.ServerUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-@Transactional
 @Service
 @RequiredArgsConstructor
 public class DataHandlerImpl implements DataHandler {
-    private static final Logger logger = LoggerFactory.getLogger(DataHandlerImpl.class);
+
     private final GamerRepository gamerRepository;
-    private final MatchRepository matchRepository;
-    private final TeamRepository teamRepository;
-    private final KillsAndCapsRepository killsAndCapsRepository;
-    private final MatchGamerRepository matchGamerRepository;
+    private final PersistenceService persistenceService;
     private final MmrCalculator mmrCalculator;
-    private static final int TEAM_SIZE = 5;
-    private static final int LOBBY_SIZE = 10;
+    public static final int TEAM_SIZE = 5;
+    public static final int LOBBY_SIZE = 10;
     private String server;
 
     @Override
     public boolean setData(GamersMatchStatsDTO dto, Gamer[] team1gamers, Gamer[] team2gamers) {
-        this.server = dto.getServer();
 
+        this.server = dto.getServer();
         Match match = createMatch(dto.getMapPlayed(), server);
         Team team1 = new Team();
         Team team2 = new Team();
@@ -54,7 +48,7 @@ public class DataHandlerImpl implements DataHandler {
         );
 
         if (whoWon != 0 && isValidated) {
-            saveData(matchGamers, killsAndCaps, match, team1, team2, team1gamers, team2gamers);
+            persistenceService.saveData(matchGamers, killsAndCaps, match, team1, team2, team1gamers, team2gamers);
         }
 
         applyHandicap(team1gamers, team2gamers);
@@ -122,39 +116,7 @@ public class DataHandlerImpl implements DataHandler {
         }
         return whoWon;
     }
-    private void saveData(MatchGamer[] matchGamers, KillsAndCaps[] killsAndCaps, Match match, Team team1, Team team2, Gamer[] team1gamers, Gamer[] team2gamers) {
-        try {
-            matchRepository.save(match);
-            teamRepository.save(team1);
-            teamRepository.save(team2);
 
-            logGamersState(team1gamers, team2gamers);
-
-            for (Gamer gamer : team1gamers) {
-                if (isValidGamer(gamer)) {
-                    gamerRepository.save(gamer);
-                } else {
-                    throw new IllegalStateException("Invalid Gamer entity: " + gamer);
-                }
-            }
-
-            for (Gamer gamer : team2gamers) {
-                if (isValidGamer(gamer)) {
-                    gamerRepository.save(gamer);
-                } else {
-                    throw new IllegalStateException("Invalid Gamer entity: " + gamer);
-                }
-            }
-
-            for (int i = 0; i < LOBBY_SIZE; i++) {
-                matchGamerRepository.save(matchGamers[i]);
-                killsAndCapsRepository.save(killsAndCaps[i]);
-            }
-        } catch (Exception e) {
-            logger.error("Error while saving data: " + e.getMessage(), e);
-            throw e;
-        }
-    }
     private void applyHandicap(Gamer[] team1gamers, Gamer[] team2gamers){
         for (int i = 0; i < TEAM_SIZE; i++) {
             team1gamers[i].setMmr(team1gamers[i].getMmr() - ServerUtils.serverHandicap(team1gamers[i].getServer(),server));
@@ -190,13 +152,5 @@ public class DataHandlerImpl implements DataHandler {
                     matchGamers[idx2]
             );
         }
-    }
-    private void logGamersState(Gamer[] team1gamers, Gamer[] team2gamers) {
-        logger.info("Team 1 Gamers: {}", Arrays.toString(team1gamers));
-        logger.info("Team 2 Gamers: {}", Arrays.toString(team2gamers));
-    }
-
-    private boolean isValidGamer(Gamer gamer) {
-        return gamer != null && gamer.getId() > 0;
     }
 }
