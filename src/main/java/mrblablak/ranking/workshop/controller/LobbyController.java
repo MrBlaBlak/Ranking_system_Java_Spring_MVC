@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -30,27 +31,34 @@ public class LobbyController {
     }
     //find most balanced teams
     @PostMapping("/pickTeams")
-    public String processForm(GamersDTO gamersDTO, Model model) {
+    public String processForm(GamersDTO gamersDTO, RedirectAttributes redirectAttrs) {
         if (lobbyService.processTeams(gamersDTO)) {
-            model.addAttribute("team1", lobbyService.getTeam1());
-            model.addAttribute("team2", lobbyService.getTeam2());
-            model.addAttribute("server", lobbyService.getServer());
-            model.addAttribute("gamersMatchStatsDTO", new GamersMatchStatsDTO());
-            return "gamer/teamsScores";
+            redirectAttrs.addFlashAttribute("team1", lobbyService.getTeam1());
+            redirectAttrs.addFlashAttribute("team2", lobbyService.getTeam2());
+            redirectAttrs.addFlashAttribute("server", lobbyService.getServer());
+            redirectAttrs.addFlashAttribute("gamersMatchStatsDTO", new GamersMatchStatsDTO());
+            return "redirect:/gameResults";  // 🔥 PRG
         }
         else
         {
             return "redirect:/pickTeams";
         }
     }
+    //prg
+    @GetMapping("/gameResults")
+    public String teamsScores() {
+        return "gamer/gameResults";
+    }
+
     //update scores of players
-    @PostMapping("/updateScores")
-    public String updateScores(GamersMatchStatsDTO gamersMatchStatsDTO, Model model) {
+    @PostMapping("/gameResults")
+    public String updateScores(GamersMatchStatsDTO gamersMatchStatsDTO, RedirectAttributes redirectAttrs) {
         if(lobbyService.calculateMmrAndUpdatePlayers(gamersMatchStatsDTO)) {
-            model.addAttribute("team1", lobbyService.getTeam1());
-            model.addAttribute("team2", lobbyService.getTeam2());
-            model.addAttribute("server", gamersMatchStatsDTO.getServer());
-            return "gamer/teamsScores";
+            redirectAttrs.addFlashAttribute("team1", lobbyService.getTeam1());
+            redirectAttrs.addFlashAttribute("team2", lobbyService.getTeam2());
+            redirectAttrs.addFlashAttribute("server", gamersMatchStatsDTO.getServer());
+            redirectAttrs.addFlashAttribute("gamersMatchStatsDTO", new GamersMatchStatsDTO());
+            return "redirect:/gameResults";
         }
         else
         {

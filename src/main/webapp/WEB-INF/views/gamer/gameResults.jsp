@@ -13,10 +13,10 @@
 <head>
     <title>Title</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="resources/css/teamsScores-styles.css">
-    <script src="resources/js/randomData.js"></script>
-    <script src="resources/js/enableSDWinner.js"></script>
-    <script src="resources/js/pasteImage.js"></script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/teamsScores-styles.css">
+    <script src="${pageContext.request.contextPath}/resources/js/randomData.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/js/enableSDWinner.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/js/pasteImage.js"></script>
 </head>
 <body>
 <%--below script to fill scores with random data--%>
@@ -24,7 +24,7 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8">
-            <form:form method="post" action="${pageContext.request.contextPath}/updateScores"
+            <form:form method="post" action="${pageContext.request.contextPath}/gameResults"
                        modelAttribute="gamersMatchStatsDTO">
                 <div class="form-group">
                     <table class="table">
